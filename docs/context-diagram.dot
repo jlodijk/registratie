@@ -1,0 +1,54 @@
+digraph RegistratieContext {
+  graph [fontname="Helvetica", fontsize=11, rankdir=LR, splines=true];
+  node [shape=rectangle, fontname="Helvetica", fontsize=11];
+  edge [fontname="Helvetica", fontsize=10];
+
+  subgraph cluster_users {
+    label="Actors";
+    color="#cccccc";
+    style="rounded";
+    student [label="Student" shape=oval];
+    begeleider [label="Begeleider" shape=oval];
+    admin [label="Admin" shape=oval];
+  }
+
+  subgraph cluster_ui {
+    label="Registratie Web UI (Phoenix LiveView)";
+    color="#1f77b4";
+    fontcolor="#1f77b4";
+    style="rounded";
+    web_ui [label="UI Layer\ncontrollers + LiveViews" shape=rectangle];
+  }
+
+  subgraph cluster_domains {
+    label="Domein Contexten";
+    color="#2ca02c";
+    style="rounded";
+    auth_ctx [label="Authenticatie context\n(Registratie.Auth, plugs)" shape=rectangle];
+    student_ctx [label="Studentbeheer context\n(Registratie.Student, controllers)" shape=rectangle];
+    attendance_ctx [label="Aanwezigheid context\n(Attendance + Report/PDF)" shape=rectangle];
+  }
+
+  subgraph cluster_db {
+    label="Externe systemen";
+    color="#ff7f0e";
+    style="rounded";
+    couchdb [label="CouchDB cluster\n_databases_: _users, studenten, aanwezig, bbsid" shape=rectangle];
+    pdf_renderer [label="PDF renderer\n(AttendancePDF via wkhtmltopdf)" shape=rectangle];
+  }
+
+  student -> web_ui [label="Login\nprofiel inzien"];
+  begeleider -> web_ui [label="Studentbeheer\nrapportages"];
+  admin -> web_ui [label="Roles beheren"];
+
+  web_ui -> auth_ctx [label="Authenticate, reset password" dir=both];
+  web_ui -> student_ctx [label="CRUD studenten, profiel" dir=both];
+  web_ui -> attendance_ctx [label="Logins loggen, rapporten" dir=both];
+
+  attendance_ctx -> student_ctx [label="Leest stagedagen\nvoor validaties" dir=back];
+
+  auth_ctx -> couchdb [label="/_session, _users"];
+  student_ctx -> couchdb [label="studenten db"];
+  attendance_ctx -> couchdb [label="aanwezig + bbsid"];
+  attendance_ctx -> pdf_renderer [label="Genereer PDF rapport"];
+}

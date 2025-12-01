@@ -1,0 +1,155 @@
+<div class="mx-auto max-w-5xl space-y-8">
+  <section class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+    <div class="flex items-center justify-between gap-4 flex-wrap">
+      <div>
+        <h1 class="text-2xl font-semibold text-zinc-900">Netwerkinventarisatie</h1>
+        <p class="text-sm text-zinc-600">Noteer per ruimte de wifi-gegevens.</p>
+      </div>
+    </div>
+    <div class="mt-6 space-y-3 rounded-2xl border border-blue-200 bg-blue-50 px-5 py-4 text-sm text-blue-900">
+      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-blue-700 flex items-center gap-2">
+        <.icon name="hero-information-circle" class="h-4 w-4" />
+        Helptoets
+      </p>
+      <ul class="list-disc space-y-2 pl-5">
+        <%= for instruction <- @instructions do %>
+          <li><%= instruction %></li>
+        <% end %>
+      </ul>
+    </div>
+  </section>
+
+  <section class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+    <.form for={@form} action={~p"/network-inventarisatie"} method="post" class="space-y-8">
+      <div class="rounded-2xl border border-zinc-100 bg-zinc-50 p-4 space-y-4">
+        <% student_name = Phoenix.HTML.Form.input_value(@form, :student_name) || @auto_student_name %>
+        <% date_iso = Phoenix.HTML.Form.input_value(@form, :date) || @auto_date_iso %>
+        <% date_value = format_eu_date(date_iso) %>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Naam student</p>
+            <p class="mt-1 text-lg font-semibold text-zinc-900"><%= student_name %></p>
+          </div>
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Datum</p>
+            <p class="mt-1 text-lg font-semibold text-zinc-900"><%= date_value %></p>
+          </div>
+        </div>
+        <input type="hidden" name="network[student_name]" value={student_name} />
+        <input type="hidden" name="network[date]" value={date_iso} />
+      </div>
+
+      <% fields = [
+        %{name: :room, label: "Ruimte", help: "Noteer bijvoorbeeld 'Lokaal 2.05'.", example: "Lokaal 2.05", required: true},
+        %{name: :ssid, label: "SSID", help: "PowerShell: `netsh wlan show interfaces` → SSID.", example: "OASE-WIFI", required: true},
+        %{name: :bssid, label: "BSSID", help: "`netsh wlan show interfaces` → BSSID.", example: "00:11:22:33:44:55", required: true},
+        %{name: :signal_dbm, label: "Signaalsterkte (dBm)", help: "`netsh wlan show interfaces` geeft 'Signal'. Zet om naar dBm (~% - 100).", example: "-52 dBm", required: true},
+        %{name: :frequency_band, label: "Frequentieband", help: "Controleer in wifi analyzer of het 2,4 / 5 / 6 GHz is.", example: "5 GHz", required: true, input: :select, options: ["2,4 GHz", "5 GHz", "6 GHz"]},
+        %{name: :channel, label: "Kanaalnummer", help: "`netsh wlan show interfaces` → Channel.", example: "36", required: true},
+        %{name: :security_type, label: "Type beveiliging", help: "`netsh wlan show interfaces` → Authentication (bijv. WPA2).", example: "WPA2", required: true, input: :select, options: ["WPA2", "WPA3", "Open"]},
+        %{name: :link_speed, label: "Link speed (Mbps)", help: "`netsh wlan show interfaces` → Receive/Transmit rate.", example: "300", required: true},
+        %{name: :speedtest_download, label: "Speedtest download (Mbps)", help: "Open je browser, ga naar speedtest.net (Ookla) en noteer de downloadwaarde.", example: "85,0", required: true},
+        %{name: :speedtest_upload, label: "Speedtest upload (Mbps)", help: "Blijf in de browser op speedtest.net en noteer de uploadwaarde.", example: "32,5", required: true},
+        %{name: :ping, label: "Ping (ms)", help: "Gebruik speedtest of `ping 1.1.1.1 -n 4` en noteer gemiddelde.", example: "12", required: true},
+        %{name: :ipv4, label: "IPv4-adres", help: "PowerShell: `ipconfig` → Wireless LAN adapter IPv4 Address.", example: "192.168.1.42", required: true},
+        %{name: :gateway, label: "Default gateway", help: "`ipconfig` → Default Gateway.", example: "192.168.1.1", required: true}
+      ] %>
+
+      <div class="space-y-4 rounded-2xl border border-zinc-100 bg-zinc-50 p-4">
+        <div class="grid gap-4 sm:grid-cols-2">
+          <%= for field <- fields do %>
+            <% form_field = @form[field.name] %>
+            <div>
+              <div class="flex items-center gap-2">
+                <label class="text-sm font-semibold text-zinc-800" for={form_field.id}>
+                  <%= field[:label] %>
+                  <span class="text-red-500">*</span>
+                </label>
+                <span class="relative inline-block">
+                  <button
+                    type="button"
+                    id={form_field.id <> "-help"}
+                    class="inline-flex h-6 w-6 items-center justify-center rounded-full border-2 border-emerald-400 text-emerald-600 transition hover:bg-emerald-50"
+                    phx-hook="FieldHelp"
+                    data-help-title={field[:label]}
+                    data-help-text={field[:help]}
+                  >
+                    ?
+                  </button>
+                </span>
+              </div>
+              <%= if field[:input] == :select do %>
+                <select
+                  id={form_field.id}
+                  name={form_field.name}
+                  required
+                  class="mt-2 w-full rounded-xl border border-zinc-300 px-4 py-2 text-sm text-zinc-900 focus:border-blue-400 focus:outline-none"
+                >
+                  <%= for option <- field[:options] || [] do %>
+                    <option value={option} selected={form_field.value == option}>
+                      <%= option %>
+                    </option>
+                  <% end %>
+                </select>
+              <% else %>
+                <input
+                  type="text"
+                  id={form_field.id}
+                  name={form_field.name}
+                  value={form_field.value}
+                  required
+                  class="mt-2 w-full rounded-xl border border-zinc-300 px-4 py-2 text-sm text-zinc-900 focus:border-blue-400 focus:outline-none"
+                />
+              <% end %>
+              <p class="mt-1 text-xs text-zinc-500">
+                Verwacht antwoord:
+                <span class="font-semibold text-zinc-800"><%= field[:example] %></span>
+              </p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="flex justify-end">
+        <button
+          type="submit"
+          class="rounded-xl bg-emerald-600 px-6 py-3 text-sm font-semibold uppercase tracking-wide text-white shadow-sm transition hover:bg-emerald-700"
+        >
+          Opslaan in CouchDB
+        </button>
+      </div>
+    </.form>
+  </section>
+
+  <div
+    id="help-modal"
+    class="fixed inset-0 z-40 hidden items-center justify-center bg-black/70 p-4 text-sm text-zinc-800"
+    role="dialog"
+    aria-modal="true"
+  >
+    <div class="relative w-full max-w-2xl rounded-2xl bg-white p-6 shadow-2xl">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-[0.2em] text-blue-400">Help</p>
+          <h3 class="text-xl font-semibold text-zinc-900" data-help-title>Veldinformatie</h3>
+        </div>
+        <button type="button" class="text-sm font-semibold text-blue-600" data-help-close>
+          Sluiten
+        </button>
+      </div>
+      <p class="mt-4 whitespace-pre-line text-sm leading-relaxed text-zinc-700" data-help-body>
+        Selecteer een helpknop om instructies te zien.
+      </p>
+      <div class="mt-4 rounded-xl border border-amber-100 bg-amber-50 px-4 py-3 text-xs text-amber-800">
+        Tip: open PowerShell via Win + X en kies “Windows PowerShell (Admin)”.
+      </div>
+      <button
+        type="button"
+        class="mt-6 w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold uppercase tracking-wide text-white shadow-sm transition hover:bg-blue-700"
+        data-help-close
+      >
+        Ik heb het begrepen
+      </button>
+    </div>
+  </div>
+</div>

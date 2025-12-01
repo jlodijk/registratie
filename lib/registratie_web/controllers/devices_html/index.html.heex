@@ -1,0 +1,40 @@
+<div class="mx-auto max-w-4xl space-y-8">
+  <section class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+    <h1 class="text-2xl font-semibold text-zinc-900">Devices</h1>
+    <p class="mt-2 text-sm text-zinc-600">
+      Deze opdracht is verplicht voor alle studenten van de opleiding <span class="font-semibold">BOL 2</span>.
+      Je inspecteert laptops, bepaalt de hostname en vult vervolgens een volledige hardware inventarisatie in.
+    </p>
+    <div class="mt-6 space-y-3 rounded-2xl border border-blue-200 bg-blue-50 px-5 py-4 text-sm text-blue-900">
+      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-blue-700 flex items-center gap-2">
+        <.icon name="hero-information-circle" class="h-4 w-4" />
+        Helptoets
+      </p>
+      <ul class="list-disc space-y-2 pl-5">
+        <%= for instruction <- @instructions do %>
+          <li><%= instruction %></li>
+        <% end %>
+      </ul>
+    </div>
+    <div class="mt-6 flex flex-wrap gap-3">
+      <.link
+        href={~p"/laptop-inventarisatie"}
+        class="inline-flex items-center gap-2 rounded-xl border border-zinc-300 px-5 py-3 text-sm font-semibold text-zinc-800 shadow-sm transition hover:bg-zinc-100"
+      >
+        <.icon name="hero-bolt" class="h-5 w-5" />
+        Laptopinventarisatie
+      </.link>
+    </div>
+  </section>
+
+  <section class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm space-y-4">
+    <h2 class="text-xl font-semibold text-zinc-900">Waarom hostname als sleutel?</h2>
+    <p class="text-sm text-zinc-600">
+      Iedere inventarisatie wordt opgeslagen in CouchDB in de database <code>laptops</code>. De hostname van het apparaat bepaalt de sleutel van het document.
+      Zo kun je een laptop later makkelijk terugvinden en meerdere revisies bijhouden.
+    </p>
+    <p class="text-sm text-zinc-600">
+      Vergeet niet dat de tweede inventarisatie verplicht door een andere BOL 2 student wordt uitgevoerd. Deel de hostname dus met je klasgenoten zodra jij klaar bent.
+    </p>
+  </section>
+</div>

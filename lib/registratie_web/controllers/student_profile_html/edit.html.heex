@@ -1,0 +1,95 @@
+<div class="space-y-6">
+  <div class="flex flex-col gap-2">
+    <h1 class="text-2xl font-semibold text-zinc-900">
+      Profiel van <span class="text-blue-700">{@student_name}</span>
+    </h1>
+    <p class="text-sm text-zinc-600">
+      Pas je persoonlijke gegevens aan. Je stagedagen staan hieronder weergegeven, maar kunnen alleen door een begeleider worden aangepast.
+    </p>
+  </div>
+
+  <.simple_form for={@form} action={~p"/profiel"} method="post">
+    <.input
+      field={@form[:voornaam]}
+      label="Voornaam"
+      value={Map.get(@student_data, "voornaam", "")}
+    />
+    <.input
+      field={@form[:achternaam]}
+      label="Achternaam"
+      value={Map.get(@student_data, "achternaam", "")}
+    />
+    <.input
+      field={@form[:email]}
+      type="email"
+      label="E-mailadres"
+      value={Map.get(@student_data, "email", "")}
+    />
+    <.input
+      field={@form[:mobiel]}
+      label="Mobiel nummer"
+      value={Map.get(@student_data, "mobiel", "")}
+    />
+    <.input
+      field={@form[:woonplaats]}
+      label="Woonplaats"
+      value={Map.get(@student_data, "woonplaats", "")}
+    />
+    <.input
+      field={@form[:postcode]}
+      label="Postcode"
+      placeholder="1234 AB"
+      pattern="^\d{4}\s?[A-Za-z]{2}$"
+      title="Voer een geldige Nederlandse postcode in (bijv. 1234 AB)"
+      value={Map.get(@student_data, "postcode", "")}
+    />
+
+    <div>
+      <p class="text-sm font-semibold text-zinc-800">Stagedagen</p>
+      <div class="mt-2 flex flex-wrap gap-2">
+        <span
+          :for={day <- @stage_days}
+          class="inline-flex items-center rounded-full bg-zinc-100 px-3 py-1 text-sm font-medium text-zinc-700"
+        >
+          {String.upcase(day)}
+        </span>
+      </div>
+    </div>
+
+    <div class="rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-700">
+      <p>
+        <span class="font-semibold">Status:</span>
+        {@student_data["status"] || "Onbekend"}
+      </p>
+      <p class="mt-1">
+        <span class="font-semibold">Startdatum:</span>
+        {@student_data["startDatum"] || "-"}
+      </p>
+      <p class="mt-1">
+        <span class="font-semibold">Einddatum:</span>
+        {@student_data["eindDatum"] || "-"}
+      </p>
+      <p class="mt-1">
+        <span class="font-semibold">Laatst bijgewerkt:</span>
+        {@student_data["updated_at"] || "-"}
+      </p>
+    </div>
+
+    <:actions>
+      <button
+        type="submit"
+        class="inline-flex items-center gap-2 rounded-full border-2 border-green-300 bg-green-100 px-6 py-2 font-semibold text-green-800 shadow-sm transition hover:bg-green-200 focus:outline-none focus:ring-4 focus:ring-green-100"
+      >
+        Wijzigingen opslaan
+      </button>
+
+      <button
+        type="button"
+        onclick="window.history.back()"
+        class="inline-flex items-center gap-2 rounded-full border-2 border-rose-200 bg-rose-50 px-6 py-2 font-semibold text-rose-700 shadow-sm transition hover:bg-rose-100 focus:outline-none focus:ring-4 focus:ring-rose-100"
+      >
+        Afbreken
+      </button>
+    </:actions>
+  </.simple_form>
+</div>

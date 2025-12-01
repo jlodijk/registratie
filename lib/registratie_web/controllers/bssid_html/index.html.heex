@@ -1,0 +1,157 @@
+<div class="mx-auto max-w-5xl space-y-10">
+  <section class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+    <h1 class="text-2xl font-semibold text-zinc-900">Toegestane BSSID toevoegen</h1>
+    <p class="mt-2 text-sm text-zinc-600">
+      Voeg een BSSID toe en koppel deze aan één of meerdere locaties. Meerdere locaties scheid je met
+      komma's of nieuwe regels.
+    </p>
+
+    <.simple_form for={@form} action={~p"/bbsids"} method="post" class="mt-6">
+      <.input
+        field={@form[:bssid]}
+        type="text"
+        label="BSSID"
+        placeholder="AA:BB:CC:DD:EE:FF"
+        required
+        autocomplete="off"
+      />
+
+      <div class="space-y-3" id="locations-wrapper">
+        <label class="text-sm font-medium text-zinc-700">Locaties</label>
+        <div id="location-fields" class="space-y-2">
+          <div class="flex items-center gap-2" data-location-row>
+            <input
+              type="text"
+              name="bbsid[locations][]"
+              placeholder="Hoofdkantoor"
+              class="flex-1 rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-zinc-400 focus:outline-none"
+            />
+          </div>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button
+            type="button"
+            id="add-location"
+            class="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-xs font-semibold text-blue-700 hover:bg-blue-100"
+          >
+            + Locatie toevoegen
+          </button>
+          <button
+            type="button"
+            id="remove-location"
+            class="inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-4 py-2 text-xs font-semibold text-red-700 hover:bg-red-100 disabled:opacity-40"
+            disabled
+          >
+            − Locatie verwijderen
+          </button>
+        </div>
+      </div>
+
+      <:actions>
+        <.button type="submit" class="w-full justify-center">Toevoegen</.button>
+      </:actions>
+    </.simple_form>
+  </section>
+
+  <section class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+    <div class="flex items-center justify-between">
+      <h2 class="text-xl font-semibold text-zinc-900">Geregistreerde BSSID's</h2>
+      <span class="text-sm text-zinc-500"><%= length(@entries) %> actief</span>
+    </div>
+
+    <%= if @entries == [] do %>
+      <p class="mt-4 text-sm text-zinc-600">Nog geen BSSID's toegevoegd.</p>
+    <% else %>
+      <div class="mt-4 overflow-hidden rounded-xl border border-zinc-200">
+        <table class="min-w-full divide-y divide-zinc-200 text-sm">
+          <thead class="bg-zinc-50 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
+            <tr>
+              <th class="px-4 py-3">BSSID</th>
+              <th class="px-4 py-3">Locaties</th>
+              <th class="px-4 py-3 text-right">Acties</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-100 bg-white text-zinc-700">
+            <%= for entry <- @entries do %>
+              <tr>
+                <td class="px-4 py-3 font-mono text-sm"><%= entry["BBSID"] %></td>
+                <td class="px-4 py-3">
+                  <ul class="list-disc pl-5 text-sm">
+                    <%= for locatie <- (entry["Locatie"] || []) do %>
+                      <li><%= locatie %></li>
+                    <% end %>
+                  </ul>
+                </td>
+                <td class="px-4 py-3 text-right">
+                  <div class="flex justify-end gap-2">
+                    <.link
+                      href={~p"/bbsids/#{entry["_id"]}/edit"}
+                      class="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-xs font-semibold text-blue-700 transition hover:bg-blue-100"
+                    >
+                      Wijzigen
+                    </.link>
+                    <.link
+                      href={~p"/bbsids/#{entry["_id"]}"}
+                      method="delete"
+                      data-confirm="Weet je zeker dat je deze BSSID wilt verwijderen?"
+                      class="inline-flex items-center rounded-full border border-red-200 bg-red-50 px-4 py-2 text-xs font-semibold text-red-700 transition hover:bg-red-100"
+                    >
+                      Verwijderen
+                    </.link>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+  </section>
+</div>
+
+<script>
+  (function() {
+    const wrapper = document.getElementById("locations-wrapper");
+    if (!wrapper) return;
+
+    const fieldsContainer = wrapper.querySelector("#location-fields");
+    const addButton = wrapper.querySelector("#add-location");
+    const removeButton = wrapper.querySelector("#remove-location");
+
+    const toggleRemoveButtons = () => {
+      const rows = fieldsContainer.querySelectorAll("[data-location-row]");
+      if (removeButton) {
+        removeButton.disabled = rows.length === 1;
+      }
+    };
+
+    const addRow = (value = "") => {
+      const row = document.createElement("div");
+      row.className = "flex items-center gap-2";
+      row.setAttribute("data-location-row", "");
+
+      const input = document.createElement("input");
+      input.type = "text";
+      input.name = "bbsid[locations][]";
+      input.placeholder = "Locatie";
+      input.required = false;
+      input.value = value;
+      input.className = "flex-1 rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-zinc-400 focus:outline-none";
+
+      row.appendChild(input);
+      fieldsContainer.appendChild(row);
+      toggleRemoveButtons();
+    };
+
+    addButton?.addEventListener("click", () => addRow());
+    removeButton?.addEventListener("click", () => {
+      const rows = fieldsContainer.querySelectorAll("[data-location-row]");
+      if (rows.length > 1) {
+        rows[rows.length - 1].remove();
+        toggleRemoveButtons();
+      }
+    });
+
+    toggleRemoveButtons();
+  })();
+</script>

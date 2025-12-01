@@ -1,0 +1,252 @@
+<div class="mx-auto max-w-6xl space-y-8">
+  <section class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-[0.25em] text-blue-500 flex items-center gap-2">
+          <.icon name="hero-rocket-launch" class="h-4 w-4" /> Hulpvragen
+        </p>
+        <h1 class="mt-2 text-3xl font-semibold text-zinc-900">Noteer vragen van bezoekers</h1>
+        <p class="mt-2 text-sm text-zinc-600 max-w-3xl">
+          Noteer kort de vraag, jouw oplossing en of er een vervolgafspraak/escalatie nodig is. Vul in voornaam van de klant.
+        </p>
+      </div>
+      <div class="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 shadow-sm">
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-600 flex items-center gap-2">
+          <.icon name="hero-user-circle" class="h-4 w-4" /> Student
+        </p>
+        <p class="mt-1 font-semibold text-zinc-900"><%= @student_name %></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+    <.form for={@form} action={~p"/hulpvragen"} method="post" class="space-y-6">
+      <div class="grid gap-4 md:grid-cols-2">
+        <div class="space-y-2">
+          <label class="text-sm font-semibold text-zinc-800">Voornaam klant <span class="text-red-500">*</span></label>
+          <input
+            type="text"
+            name="help_request[customer_first_name]"
+            value={Phoenix.HTML.Form.input_value(@form, :customer_first_name)}
+            required
+            class="w-full rounded-xl border border-zinc-300 px-4 py-2 text-sm text-zinc-900 focus:border-blue-400 focus:outline-none"
+          />
+        </div>
+        <div class="space-y-2">
+          <label class="text-sm font-semibold text-zinc-800">Categorie</label>
+          <select
+            name="help_request[category]"
+            class="w-full rounded-xl border border-zinc-300 px-4 py-2 text-sm text-zinc-900 focus:border-blue-400 focus:outline-none"
+          >
+            <%= for category <- @categories do %>
+              <option value={category} selected={Phoenix.HTML.Form.input_value(@form, :category) == category}><%= category %></option>
+            <% end %>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid gap-4 md:grid-cols-2">
+        <div class="space-y-2">
+          <label class="text-sm font-semibold text-zinc-800">Apparaattype</label>
+          <input
+            type="text"
+            name="help_request[device_type]"
+            placeholder="Bijv. telefoon, tablet, laptop"
+            value={Phoenix.HTML.Form.input_value(@form, :device_type)}
+            class="w-full rounded-xl border border-zinc-300 px-4 py-2 text-sm text-zinc-900 focus:border-blue-400 focus:outline-none"
+          />
+        </div>
+        <div class="space-y-2">
+          <label class="text-sm font-semibold text-zinc-800">Status</label>
+          <select
+            name="help_request[status]"
+            class="w-full rounded-xl border border-zinc-300 px-4 py-2 text-sm text-zinc-900 focus:border-blue-400 focus:outline-none"
+          >
+            <%= for status <- @statuses do %>
+              <option value={status} selected={Phoenix.HTML.Form.input_value(@form, :status) == status}><%= status %></option>
+            <% end %>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid gap-4 md:grid-cols-2">
+        <div class="space-y-2">
+          <label class="text-sm font-semibold text-zinc-800">Vraag/probleem <span class="text-red-500">*</span></label>
+          <textarea
+            name="help_request[question]"
+            rows="4"
+            required
+            class="w-full rounded-xl border border-zinc-300 px-4 py-2 text-sm text-zinc-900 focus:border-blue-400 focus:outline-none"
+          ><%= Phoenix.HTML.Form.input_value(@form, :question) %></textarea>
+        </div>
+        <div class="space-y-2">
+          <label class="text-sm font-semibold text-zinc-800">Oplossing <span class="text-red-500">*</span></label>
+          <textarea
+            name="help_request[solution]"
+            rows="4"
+            required
+            class="w-full rounded-xl border border-zinc-300 px-4 py-2 text-sm text-zinc-900 focus:border-blue-400 focus:outline-none"
+          ><%= Phoenix.HTML.Form.input_value(@form, :solution) %></textarea>
+        </div>
+      </div>
+
+      <div class="space-y-3 rounded-2xl border border-zinc-100 bg-zinc-50 p-4">
+        <p class="text-sm font-semibold text-zinc-800 flex items-center gap-2">
+          <.icon name="hero-exclamation-circle" class="h-4 w-4" /> Escalatie / vervolgafspraak
+        </p>
+        <div class="flex flex-wrap gap-4 items-center">
+          <label class="inline-flex items-center gap-2 text-sm text-zinc-800">
+            <input type="radio" name="help_request[escalated]" value="nee" checked={Phoenix.HTML.Form.input_value(@form, :escalated) != "ja"} />
+            Geen escalatie
+          </label>
+          <label class="inline-flex items-center gap-2 text-sm text-zinc-800">
+            <input type="radio" name="help_request[escalated]" value="ja" checked={Phoenix.HTML.Form.input_value(@form, :escalated) == "ja"} />
+            Wel escalatie
+          </label>
+        </div>
+        <div class="grid gap-4 md:grid-cols-2">
+          <div class="space-y-2">
+            <label class="text-sm font-semibold text-zinc-800">Vervolgafspraak (verplicht bij escalatie)</label>
+            <input
+              type="text"
+              name="help_request[followup_when]"
+              placeholder="Bijv. 12-12-2024 15:00 bij docent"
+              value={Phoenix.HTML.Form.input_value(@form, :followup_when)}
+              class="w-full rounded-xl border border-zinc-300 px-4 py-2 text-sm text-zinc-900 focus:border-blue-400 focus:outline-none"
+            />
+          </div>
+          <div class="space-y-2">
+            <label class="text-sm font-semibold text-zinc-800">Notitie vervolg</label>
+            <input
+              type="text"
+              name="help_request[followup_notes]"
+              placeholder="Kort: wat moet er in de vervolgafspraak gebeuren?"
+              value={Phoenix.HTML.Form.input_value(@form, :followup_notes)}
+              class="w-full rounded-xl border border-zinc-300 px-4 py-2 text-sm text-zinc-900 focus:border-blue-400 focus:outline-none"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end">
+        <button
+          type="submit"
+          class="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold uppercase tracking-wide text-white shadow-sm transition hover:bg-blue-700"
+        >
+          <.icon name="hero-check" class="h-4 w-4" />
+          Opslaan
+        </button>
+      </div>
+    </.form>
+  </section>
+
+  <section class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm space-y-4">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-amber-500 flex items-center gap-2">
+          <.icon name="hero-clipboard-document-list" class="h-4 w-4" /> Jouw hulpvragen
+        </p>
+        <h2 class="text-xl font-semibold text-zinc-900">Openstaande hulpvragen</h2>
+        <p class="text-sm text-zinc-600">Filter op status en zie alleen jouw eigen registraties.</p>
+      </div>
+      <form method="get" action={~p"/hulpvragen"} class="flex items-center gap-2">
+        <label class="text-sm text-zinc-700">Status</label>
+        <select
+          name="status"
+          class="rounded-xl border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-blue-400 focus:outline-none"
+          onchange="this.form.submit()"
+        >
+          <option value="" selected={@status_filter in [nil, ""]}>Alles</option>
+          <%= for status <- @statuses do %>
+            <option value={status} selected={@status_filter == status}><%= status %></option>
+          <% end %>
+        </select>
+      </form>
+    </div>
+
+    <%= if Enum.empty?(@requests) do %>
+      <div class="rounded-2xl border border-dashed border-zinc-200 bg-zinc-50 p-6 text-sm text-zinc-600">
+        Geen hulpvragen gevonden.
+      </div>
+    <% end %>
+
+    <div class="grid gap-4">
+      <%= for request <- @requests do %>
+        <% {badge_class, badge_label} = status_badge(request["status"]) %>
+        <div class="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-[0.2em] text-blue-500">Klant: <%= request["customer_first_name"] %></p>
+              <h3 class="text-lg font-semibold text-zinc-900"><%= device_display(request["device_type"]) %> — <%= request["category"] || "Onbekend" %></h3>
+              <p class="text-xs text-zinc-500">Student: <%= request["submitted_by_full_name"] || request["submitted_by"] || "onbekend" %></p>
+              <p class="text-xs text-zinc-500">Ingediend: <%= format_timestamp(request["created_at"]) %></p>
+            </div>
+            <span class={["inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold", badge_class]}>
+              <%= badge_label %>
+            </span>
+          </div>
+
+          <div class="mt-3 grid gap-3 md:grid-cols-2">
+            <div class="rounded-xl border border-zinc-100 bg-zinc-50 p-3 text-sm text-zinc-800">
+              <p class="text-xs font-semibold uppercase tracking-[0.15em] text-zinc-500">Vraag</p>
+              <p class="mt-1 whitespace-pre-line"><%= request["question"] %></p>
+            </div>
+            <div class="rounded-xl border border-zinc-100 bg-zinc-50 p-3 text-sm text-zinc-800">
+              <p class="text-xs font-semibold uppercase tracking-[0.15em] text-zinc-500">Oplossing</p>
+              <p class="mt-1 whitespace-pre-line"><%= request["solution"] %></p>
+            </div>
+          </div>
+
+          <% feedback_list = request["feedback"] || [] %>
+          <%= if Enum.any?(feedback_list) do %>
+            <div class="mt-3 rounded-2xl border border-emerald-100 bg-emerald-50 p-4 text-sm text-emerald-800">
+              <p class="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700 flex items-center gap-2">
+                <.icon name="hero-chat-bubble-bottom-center-text" class="h-4 w-4" /> Feedback begeleider
+              </p>
+              <div class="mt-2 space-y-2">
+                <%= for fb <- feedback_list do %>
+                  <div class="rounded-xl border border-emerald-100 bg-white/50 px-3 py-2">
+                    <p class="text-xs font-semibold text-emerald-700">
+                      <%= fb["category"] || "Categorie" %> • <%= format_timestamp(fb["at"]) %> • <%= fb["by_full_name"] || fb["by"] || "onbekend" %>
+                    </p>
+                    <p class="mt-1 whitespace-pre-line text-emerald-900"><%= fb["comment"] || "Geen commentaar" %></p>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+
+          <div class="mt-3 grid gap-3 md:grid-cols-2">
+            <div class="rounded-xl border border-zinc-100 bg-zinc-50 p-3 text-sm text-zinc-800">
+              <p class="text-xs font-semibold uppercase tracking-[0.15em] text-zinc-500">Escalatie</p>
+              <p class="mt-1"><%= if request["escalated"], do: "Ja", else: "Nee" %></p>
+            </div>
+            <div class="rounded-xl border border-zinc-100 bg-zinc-50 p-3 text-sm text-zinc-800">
+              <p class="text-xs font-semibold uppercase tracking-[0.15em] text-zinc-500">Vervolgafspraak</p>
+              <p class="mt-1 text-sm text-zinc-800 whitespace-pre-line">
+                <%= if request["followup_when"] in [nil, ""], do: "n.v.t.", else: request["followup_when"] %>
+                <%= if request["followup_notes"] not in [nil, ""] do %>
+                  <br /><%= request["followup_notes"] %>
+                <% end %>
+              </p>
+            </div>
+          </div>
+
+          <%= if request["status"] != "afgerond" do %>
+            <div class="mt-4 flex justify-end">
+              <.form for={:status} action={~p"/hulpvragen/#{request["_id"]}/status"} method="post">
+                <input type="hidden" name="status" value="afgerond" />
+                <button
+                  type="submit"
+                  class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
+                >
+                  <.icon name="hero-check-circle" class="h-4 w-4" /> Markeer als afgerond
+                </button>
+              </.form>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </section>
+</div>

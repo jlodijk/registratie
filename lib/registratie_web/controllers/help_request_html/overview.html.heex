@@ -1,0 +1,156 @@
+<div class="mx-auto max-w-6xl space-y-8">
+  <section class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-[0.25em] text-blue-500 flex items-center gap-2">
+          <.icon name="hero-eye" class="h-4 w-4" /> Hulpvragen overzicht
+        </p>
+        <h1 class="mt-2 text-3xl font-semibold text-zinc-900">Ingekeken door begeleiders</h1>
+        <p class="mt-2 text-sm text-zinc-600 max-w-3xl">
+          Lees mee met alle geregistreerde hulpvragen. Alleen lezen; wijzigingen zijn niet mogelijk.
+        </p>
+      </div>
+      <div class="rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3 text-sm text-amber-800 shadow-sm">
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-amber-600 flex items-center gap-2">
+          <.icon name="hero-information-circle" class="h-4 w-4" /> Alleen lezen
+        </p>
+        <p class="mt-1 text-zinc-800">Begeleiders en admins zien alle hulpvragen.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm space-y-4">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-amber-500 flex items-center gap-2">
+          <.icon name="hero-clipboard-document-list" class="h-4 w-4" /> Alle hulpvragen
+        </p>
+        <h2 class="text-xl font-semibold text-zinc-900">Overzicht</h2>
+      </div>
+      <form method="get" action={~p"/hulpvragen/overzicht"} class="flex items-center gap-2">
+        <label class="text-sm text-zinc-700">Status</label>
+        <select
+          name="status"
+          class="rounded-xl border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-blue-400 focus:outline-none"
+          onchange="this.form.submit()"
+        >
+          <option value="" selected={@status_filter in [nil, ""]}>Alles</option>
+          <%= for status <- @statuses do %>
+            <option value={status} selected={@status_filter == status}><%= status %></option>
+          <% end %>
+        </select>
+      </form>
+    </div>
+
+    <%= if Enum.empty?(@requests) do %>
+      <div class="rounded-2xl border border-dashed border-zinc-200 bg-zinc-50 p-6 text-sm text-zinc-600">
+        Geen hulpvragen gevonden.
+      </div>
+    <% end %>
+
+    <div class="grid gap-4">
+      <%= for request <- @requests do %>
+        <% {badge_class, badge_label} = status_badge(request["status"]) %>
+        <div class="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-[0.2em] text-blue-500">Klant: <%= request["customer_first_name"] %></p>
+              <h3 class="text-lg font-semibold text-zinc-900">
+                <%= device_display(request["device_type"]) %> — <%= request["category"] || "Onbekend" %>
+              </h3>
+              <p class="text-xs text-zinc-500">
+                Student: <%= request["submitted_by_full_name"] || request["submitted_by"] || "onbekend" %> • <%= format_timestamp(request["created_at"]) %>
+              </p>
+            </div>
+            <span class={["inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold", badge_class]}>
+              <%= badge_label %>
+            </span>
+          </div>
+
+          <div class="mt-3 grid gap-3 md:grid-cols-2">
+            <div class="rounded-xl border border-zinc-100 bg-zinc-50 p-3 text-sm text-zinc-800">
+              <p class="text-xs font-semibold uppercase tracking-[0.15em] text-zinc-500">Vraag</p>
+              <p class="mt-1 whitespace-pre-line"><%= request["question"] %></p>
+            </div>
+            <div class="rounded-xl border border-zinc-100 bg-zinc-50 p-3 text-sm text-zinc-800">
+              <p class="text-xs font-semibold uppercase tracking-[0.15em] text-zinc-500">Oplossing</p>
+              <p class="mt-1 whitespace-pre-line"><%= request["solution"] %></p>
+            </div>
+          </div>
+
+          <% feedback_list = request["feedback"] || [] %>
+          <%= if Enum.any?(feedback_list) do %>
+            <div class="mt-3 rounded-2xl border border-emerald-100 bg-emerald-50 p-4 text-sm text-emerald-800">
+              <p class="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700 flex items-center gap-2">
+                <.icon name="hero-chat-bubble-bottom-center-text" class="h-4 w-4" /> Feedback
+              </p>
+              <div class="mt-2 space-y-2">
+                <%= for fb <- feedback_list do %>
+                  <div class="rounded-xl border border-emerald-100 bg-white/50 px-3 py-2">
+                    <p class="text-xs font-semibold text-emerald-700">
+                      <%= fb["category"] || "Categorie" %> • <%= format_timestamp(fb["at"]) %> • <%= fb["by_full_name"] || fb["by"] || "onbekend" %>
+                    </p>
+                    <p class="mt-1 whitespace-pre-line text-emerald-900"><%= fb["comment"] || "Geen commentaar" %></p>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+
+          <div class="mt-4 rounded-2xl border border-zinc-100 bg-white p-4">
+            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-blue-500 flex items-center gap-2">
+              <.icon name="hero-pencil-square" class="h-4 w-4" /> Plaats nieuw commentaar
+            </p>
+            <.form for={:help_request} action={~p"/hulpvragen/#{request["_id"]}/feedback"} method="post" class="mt-3 grid gap-3 md:grid-cols-[200px,1fr]">
+              <div class="space-y-2">
+                <label class="text-sm font-semibold text-zinc-800">Categorie</label>
+                <select
+                  name="help_request[feedback_category]"
+                  class="w-full rounded-xl border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-blue-400 focus:outline-none"
+                  required
+                >
+                  <option value="">-- kies --</option>
+                  <%= for category <- @feedback_categories do %>
+                    <option value={category}><%= category %></option>
+                  <% end %>
+                </select>
+              </div>
+              <div class="space-y-2">
+                <label class="text-sm font-semibold text-zinc-800">Commentaar</label>
+                <div class="flex gap-2">
+                  <textarea
+                    name="help_request[feedback_comment]"
+                    rows="2"
+                    class="w-full rounded-xl border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-blue-400 focus:outline-none"
+                  ></textarea>
+                  <button
+                    type="submit"
+                    class="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
+                  >
+                    <.icon name="hero-paper-airplane" class="h-4 w-4" /> Verstuur
+                  </button>
+                </div>
+              </div>
+            </.form>
+          </div>
+
+          <div class="mt-3 grid gap-3 md:grid-cols-2">
+            <div class="rounded-xl border border-zinc-100 bg-zinc-50 p-3 text-sm text-zinc-800">
+              <p class="text-xs font-semibold uppercase tracking-[0.15em] text-zinc-500">Escalatie</p>
+              <p class="mt-1"><%= if request["escalated"], do: "Ja", else: "Nee" %></p>
+            </div>
+            <div class="rounded-xl border border-zinc-100 bg-zinc-50 p-3 text-sm text-zinc-800">
+              <p class="text-xs font-semibold uppercase tracking-[0.15em] text-zinc-500">Vervolgafspraak</p>
+              <p class="mt-1 text-sm text-zinc-800 whitespace-pre-line">
+                <%= if request["followup_when"] in [nil, ""], do: "n.v.t.", else: request["followup_when"] %>
+                <%= if request["followup_notes"] not in [nil, ""] do %>
+                  <br /><%= request["followup_notes"] %>
+                <% end %>
+              </p>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </section>
+</div>

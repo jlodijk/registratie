@@ -1,0 +1,172 @@
+<div class="mx-auto max-w-5xl space-y-8">
+  <section class="rounded-3xl border border-[#5B21B6]/30 bg-white p-8 shadow-sm">
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-[#5B21B6]">Contactpersonen</p>
+        <h1 class="text-3xl font-semibold text-zinc-900">Scholen</h1>
+      </div>
+      <div class="flex gap-2">
+        <.link
+          href={~p"/contactpersonen?mode=new"}
+          class={[
+            "rounded-full border px-4 py-2 text-sm font-semibold transition",
+            @mode == "new" && "border-[#5B21B6] text-[#5B21B6]",
+            @mode != "new" && "border-zinc-300 text-zinc-800 hover:bg-zinc-100"
+          ]}
+        >Nieuw</.link>
+        <.link
+          href={~p"/contactpersonen?mode=edit"}
+          class={[
+            "rounded-full border px-4 py-2 text-sm font-semibold transition",
+            @mode == "edit" && "border-[#5B21B6] text-[#5B21B6]",
+            @mode != "edit" && "border-zinc-300 text-zinc-800 hover:bg-zinc-100"
+          ]}
+        >Wijzigen</.link>
+        <.link
+          href={~p"/contactpersonen?mode=delete"}
+          class={[
+            "rounded-full border px-4 py-2 text-sm font-semibold transition",
+            @mode == "delete" && "border-[#5B21B6] text-[#5B21B6]",
+            @mode != "delete" && "border-zinc-300 text-zinc-800 hover:bg-zinc-100"
+          ]}
+        >Verwijderen</.link>
+      </div>
+    </div>
+
+    <div class="mt-6 grid gap-6 lg:grid-cols-2">
+      <div class="rounded-2xl border border-[#FB923C] bg-[#FFF7ED] p-5">
+        <h2 class="text-lg font-semibold text-zinc-900">Bestaande contacten</h2>
+        <%= if Enum.empty?(@contacts) do %>
+          <p class="mt-4 text-sm text-zinc-600">Er zijn nog geen contactpersonen.</p>
+        <% else %>
+              <div class="mt-4 space-y-4">
+                <%= for contact <- @contacts do %>
+                  <div class="rounded-xl border border-[#FB923C]/40 bg-white p-4 shadow-sm">
+                    <p class="text-base font-semibold text-zinc-900"><%= contact["name"] %></p>
+                    <div class="mt-2 space-y-1 text-sm text-zinc-600">
+                      <p class="font-semibold text-zinc-700">Opleidingen:</p>
+                      <ul class="list-disc pl-4 text-zinc-600">
+                        <%= for opleiding <- contact["opleiding"] || [] do %>
+                          <li><%= opleiding %></li>
+                        <% end %>
+                      </ul>
+                      <p><strong>Tel:</strong> <%= contact["tel"] %></p>
+                      <p><strong>Email:</strong> <%= contact["email"] %></p>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+      </div>
+
+      <div class="rounded-2xl border border-[#5B21B6]/40 bg-white p-5 shadow-sm">
+        <%= case @mode do %>
+          <% "edit" -> %>
+            <h2 class="text-lg font-semibold text-zinc-900">Contactpersoon wijzigen</h2>
+            <.form for={%{}} method="get" action={~p"/contactpersonen"} class="mt-4 space-y-4">
+              <input type="hidden" name="mode" value="edit" />
+              <label class="text-sm font-semibold text-zinc-700">Kies contactpersoon</label>
+              <select name="id" class="w-full rounded-xl border border-zinc-300 px-3 py-2 text-sm text-zinc-900" onchange="this.form.submit()">
+                <option value="">Selecteer...</option>
+                <%= for contact <- @contacts do %>
+                  <option value={contact["_id"]} selected={contact["_id"] == @selected_id}><%= contact["name"] %></option>
+                <% end %>
+              </select>
+            </.form>
+            <%= if @selected_contact do %>
+              <.simple_form for={@edit_form} method="post" action={~p"/contactpersonen/#{@selected_contact["_id"]}/update"} class="mt-4 space-y-4">
+                <.input field={@edit_form[:name]} label="Naam" required />
+                <div id="edit-opleiding-list" class="space-y-2">
+                  <%= for value <- (@selected_contact["opleiding"] || [""]) do %>
+                    <input
+                      type="text"
+                      name="contact[opleiding][]"
+                      value={value}
+                      class="w-full rounded-xl border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-blue-400 focus:outline-none"
+                      placeholder="Opleiding"
+                    />
+                  <% end %>
+                </div>
+                <button
+                  type="button"
+                  class="rounded-full border border-[#5B21B6]/30 px-3 py-1 text-xs font-semibold text-[#5B21B6] hover:bg-[#F3E8FF]"
+                  data-action="add-opleiding"
+                  data-target="#edit-opleiding-list"
+                >
+                  + Opleiding toevoegen
+                </button>
+                <.input field={@edit_form[:tel]} label="Telefoon" />
+                <.input field={@edit_form[:email]} label="E-mail" />
+                <:actions>
+                  <.button class="w-full justify-center">Opslaan</.button>
+                </:actions>
+              </.simple_form>
+            <% else %>
+              <p class="mt-4 text-sm text-zinc-500">Selecteer eerst een contactpersoon om te wijzigen.</p>
+            <% end %>
+          <% "delete" -> %>
+            <h2 class="text-lg font-semibold text-zinc-900">Contactpersoon verwijderen</h2>
+            <.simple_form for={%{}} method="post" action={~p"/contactpersonen"} class="mt-4 space-y-4">
+              <input type="hidden" name="_method" value="delete" />
+              <label class="text-sm font-semibold text-zinc-700">Kies contactpersoon</label>
+              <select name="id" class="w-full rounded-xl border border-zinc-300 px-3 py-2 text-sm text-zinc-900" required>
+                <%= for contact <- @contacts do %>
+                  <option value={contact["_id"]}><%= contact["name"] %></option>
+                <% end %>
+              </select>
+              <:actions>
+                <.button class="w-full justify-center bg-red-600 hover:bg-red-700" phx-disable-with="Verwijderen...">
+                  Verwijder
+                </.button>
+              </:actions>
+            </.simple_form>
+          <% _ -> %>
+            <h2 class="text-lg font-semibold text-zinc-900">Nieuwe contactpersoon</h2>
+            <.simple_form for={@new_form} method="post" action={~p"/contactpersonen"} class="mt-4 space-y-4">
+              <.input field={@new_form[:name]} label="Naam" required />
+              <div id="new-opleiding-list" class="space-y-2">
+                <input
+                  type="text"
+                  name="contact[opleiding][]"
+                  class="w-full rounded-xl border border-zinc-300 px-3 py-2	text-sm text-zinc-900 focus:border-blue-400 focus:outline-none"
+                  placeholder="Opleiding"
+                  required
+                />
+              </div>
+              <button
+                type="button"
+                class="rounded-full border border-[#5B21B6]/30 px-3 py-1 text-xs font-semibold text-[#5B21B6] hover:bg-[#F3E8FF]"
+                data-action="add-opleiding"
+                data-target="#new-opleiding-list"
+              >
+                + Opleiding toevoegen
+              </button>
+              <.input field={@new_form[:tel]} label="Telefoon" />
+              <.input field={@new_form[:email]} label="E-mail" />
+              <:actions>
+                <.button class="w-full justify-center">Opslaan</.button>
+              </:actions>
+            </.simple_form>
+        <% end %>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  document.addEventListener("click", function (event) {
+    const button = event.target.closest("[data-action='add-opleiding']");
+    if (!button) return;
+
+    const selector = button.getAttribute("data-target");
+    const container = document.querySelector(selector);
+    if (!container) return;
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.name = "contact[opleiding][]";
+    input.placeholder = "Opleiding";
+    input.className = "w-full rounded-xl border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-blue-400 focus:outline-none";
+    container.appendChild(input);
+  });
+</script>

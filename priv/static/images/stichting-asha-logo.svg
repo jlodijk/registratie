@@ -1,0 +1,35 @@
+<svg width="220" height="56" viewBox="0 0 220 56" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Stichting Asha logo">
+  <title>Stichting Asha</title>
+  <defs>
+    <linearGradient id="ashaSunrise" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FDBA74" />
+      <stop offset="50%" stop-color="#FB923C" />
+      <stop offset="100%" stop-color="#F97316" />
+    </linearGradient>
+    <linearGradient id="ashaWave" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0EA5E9" />
+      <stop offset="100%" stop-color="#0284C7" />
+    </linearGradient>
+  </defs>
+
+  <g transform="translate(6 4)">
+    <circle cx="44" cy="24" r="24" fill="url(#ashaSunrise)" />
+    <path
+      d="M44 6L57 44H51L47.5 35.5H40.5L37 44H31L44 6Z"
+      fill="#fff5eb"
+    />
+    <path
+      d="M35 29H53V33H35V29Z"
+      fill="#FDBA74"
+    />
+    <path
+      d="M20 41C26 35 39 35 44 41C49 35 62 35 68 41V45C62 39 49 39 44 45C39 39 26 39 20 45V41Z"
+      fill="url(#ashaWave)"
+    />
+  </g>
+
+  <g fill="#0F172A" font-family="'Source Sans 3', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif">
+    <text x="98" y="26" font-size="14" letter-spacing="4" style="text-transform: uppercase;">STICHTING</text>
+    <text x="98" y="46" font-size="30" font-weight="700" letter-spacing="6">ASHA</text>
+  </g>
+</svg>

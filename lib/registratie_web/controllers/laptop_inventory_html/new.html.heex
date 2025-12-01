@@ -1,0 +1,249 @@
+<div class="mx-auto max-w-5xl space-y-8">
+  <section class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+    <div class="flex items-center justify-between gap-4 flex-wrap">
+      <div>
+        <h1 class="text-2xl font-semibold text-zinc-900">Laptop inventarisatie</h1>
+        <p class="text-sm text-zinc-600">Alleen voor BOL 2 studenten.</p>
+      </div>
+      <details class="rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-900">
+        <summary class="cursor-pointer font-semibold text-blue-900">Helptoets: zo vul je de opdracht in</summary>
+        <ul class="mt-3 list-disc space-y-2 pl-5 text-blue-900">
+          <%= for instruction <- @instructions do %>
+            <li><%= instruction %></li>
+          <% end %>
+        </ul>
+      </details>
+    </div>
+    <%= if @existing do %>
+      <% entries = Enum.reverse(Map.get(@existing, "entries", [])) %>
+      <div class="mt-6 space-y-4">
+        <h2 class="text-lg font-semibold text-zinc-900">Eerder opgeslagen voor hostname <%= @existing["hostname"] %></h2>
+        <%= if entries == [] do %>
+          <p class="text-sm text-zinc-600">Nog geen inventarisaties gevonden.</p>
+        <% else %>
+          <div class="space-y-3">
+            <%= for entry <- entries do %>
+              <div class="rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
+                <p class="font-semibold">
+                  <%= entry["submitted_by_full_name"] %> (<%= entry["submitted_by"] %>) — <%= entry["submitted_on"] %>
+                </p>
+                <p class="text-emerald-800 text-xs">Status: <%= @existing["status"] %></p>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </section>
+
+  <section class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+    <.form for={@form} action={~p"/laptop-inventarisatie"} method="post" class="space-y-8">
+      <div class="rounded-2xl border border-zinc-100 bg-zinc-50 p-4 space-y-4">
+        <% student_name = Phoenix.HTML.Form.input_value(@form, :student_name) || @auto_student_name %>
+        <% date_iso = Phoenix.HTML.Form.input_value(@form, :date) || @auto_date_iso %>
+        <% date_value = format_eu_date(date_iso) %>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Naam student</p>
+            <p class="mt-1 text-lg font-semibold text-zinc-900"><%= student_name %></p>
+          </div>
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Datum</p>
+            <p class="mt-1 text-lg font-semibold text-zinc-900"><%= date_value %></p>
+          </div>
+        </div>
+        <details class="rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-700">
+          <summary class="cursor-pointer font-semibold text-zinc-900">Help bij algemene informatie</summary>
+          <ul class="mt-2 list-disc space-y-1 pl-5 text-xs text-zinc-600">
+            <li>Naam en datum worden automatisch ingevuld op basis van je login.</li>
+            <li>Controleer altijd of je op de juiste laptop bent ingelogd voordat je de hostname noteert.</li>
+            <li>De tweede inventarisatie moet door een andere student gebeuren.</li>
+          </ul>
+        </details>
+        <input type="hidden" name="laptop[student_name]" value={student_name} />
+        <input type="hidden" name="laptop[date]" value={date_iso} />
+      </div>
+
+      <% sections = [
+        %{title: "Algemene gegevens", fields: [
+          %{name: :hostname, label: "Hostname (sleutel)", required: true, help: "Open PowerShell (Win + X → Windows PowerShell) en voer `hostname` uit. Noteer de exacte output.", example: "OASE-LAPTOP-01"},
+          %{name: :laptop_number, label: "Laptopnummer / Serienummer", required: true, help: "Ga naar Instellingen → Systeem → Info of lees het nummer op de sticker onder de laptop.", example: "S/N 9CD12345"}
+        ]},
+        %{title: "Processor (CPU)", fields: [
+          %{name: :cpu_name, label: "Naam CPU", required: true, help: "PowerShell (als admin): `Get-CimInstance Win32_Processor | Select Name`.", example: "Intel Core i5-1135G7"},
+          %{name: :cpu_cores, label: "Aantal cores", required: true, help: "PowerShell: `Get-CimInstance Win32_Processor | Select NumberOfCores`.", example: "4"},
+          %{name: :cpu_threads, label: "Aantal threads", required: true, help: "PowerShell: `Get-CimInstance Win32_Processor | Select NumberOfLogicalProcessors`.", example: "8"},
+          %{name: :cpu_clock, label: "Kloksnelheid", required: true, help: "PowerShell: `Get-CimInstance Win32_Processor | Select MaxClockSpeed` (MHz).", example: "2,40 GHz"}
+        ]},
+        %{title: "Werkgeheugen (RAM)", fields: [
+          %{name: :ram_total, label: "Totaal geheugen (GB)", required: true, help: "PowerShell: `(Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory / 1GB`.", example: "8,0"},
+          %{name: :ram_type, label: "Type (DDR4/DDR5)", required: true, help: "PowerShell: `Get-CimInstance Win32_PhysicalMemory | Select SMBIOSMemoryType`.", example: "DDR4"},
+          %{name: :ram_speed, label: "Snelheid (MHz)", required: true, help: "PowerShell: `Get-CimInstance Win32_PhysicalMemory | Select Speed`.", example: "3.200 MHz"},
+          %{name: :ram_slots, label: "Gebruikte/vrije slots", required: true, help: "PowerShell: `Get-CimInstance Win32_PhysicalMemoryArray | Select NumberOfMemoryDevices` en tel de geplaatste modules.", example: "1/2"}
+        ]},
+        %{title: "Opslag (HDD/SSD)", fields: [
+          %{name: :storage_type, label: "Type opslag", required: true, help: "PowerShell: `Get-CimInstance Win32_DiskDrive | Select MediaType`.", example: "SSD NVMe"},
+          %{name: :storage_capacity, label: "Capaciteit (GB)", required: true, help: "PowerShell: `Get-CimInstance Win32_DiskDrive | Select Size` en deel door 1GB.", example: "512,0"},
+          %{name: :storage_free, label: "Vrije ruimte", required: true, help: "PowerShell: `Get-Volume | Select DriveLetter,SizeRemaining`.", example: "120,5"},
+          %{name: :storage_model, label: "Merk/model", required: true, help: "PowerShell: `Get-CimInstance Win32_DiskDrive | Select Model`.", example: "Samsung 970 EVO"}
+        ]},
+        %{title: "Grafische kaart (GPU)", fields: [
+          %{name: :gpu_type, label: "Type GPU", required: true, help: "Instellingen → Beeldscherm → Geavanceerd.", example: "Dedicated"},
+          %{name: :gpu_name, label: "Naam GPU", required: true, help: "PowerShell: `Get-CimInstance Win32_VideoController | Select Name`.", example: "NVIDIA GTX 1650"},
+          %{name: :gpu_mode, label: "Geïntegreerd/dedicated", required: true, help: "Zie Apparaatbeheer → Beeldschermadapters.", example: "Dedicated"},
+          %{name: :gpu_vram, label: "VRAM", required: true, help: "PowerShell: `Get-CimInstance Win32_VideoController | Select AdapterRAM`.", example: "4,0"}
+        ]},
+        %{title: "Moederbord", fields: [
+          %{name: :motherboard_vendor, label: "Fabrikant", required: true, help: "PowerShell: `Get-CimInstance Win32_BaseBoard | Select Manufacturer`.", example: "Lenovo"},
+          %{name: :motherboard_model, label: "Modelnummer", required: true, help: "PowerShell: `Get-CimInstance Win32_BaseBoard | Select Product`.", example: "20RA"},
+          %{name: :bios_version, label: "BIOS-versie", required: true, help: "PowerShell: `Get-CimInstance Win32_BIOS | Select SMBIOSBIOSVersion`.", example: "N2XET30W (1.20)"}
+        ]},
+        %{title: "Accu", fields: [
+          %{name: :battery_capacity, label: "Capaciteit", required: true, help: "Powercfg /batteryreport → 'Design Capacity'.", example: "52.500 mWh"},
+          %{name: :battery_health, label: "Health", required: true, help: "Vergelijk 'Full Charge Capacity' met 'Design Capacity'.", example: "45.000 mWh"},
+          %{name: :battery_cycles, label: "Laadcycli", required: true, help: "PowerShell: `Get-CimInstance Win32_Battery | Select CycleCount`.", example: "210"}
+        ]},
+        %{title: "Netwerk", fields: [
+          %{name: :wifi_card, label: "Wi-Fi kaart", required: true, help: "PowerShell: `Get-CimInstance Win32_NetworkAdapter | Where {$_.Name -match \"Wi-Fi\"} | Select Name`.", example: "Intel Wi-Fi 6 AX201"},
+          %{name: :ethernet_card, label: "Ethernet kaart", required: true, help: "PowerShell: `Get-CimInstance Win32_NetworkAdapter | Where {$_.Name -match \"Ethernet\"} | Select Name`.", example: "Realtek PCIe GbE"},
+          %{name: :bluetooth_version, label: "Bluetooth versie", required: true, help: "PowerShell: `Get-CimInstance Win32_PnPEntity | Where {$_.Name -match \"Bluetooth\"} | Select Name`.", example: "5,2"}
+        ]},
+        %{title: "Poorten", fields: [
+          %{name: :ports_usb_a, label: "USB-A", required: true, help: "Tel het aantal USB-A poorten.", example: "2"},
+          %{name: :ports_usb_c, label: "USB-C", required: true, help: "Tel het aantal USB-C poorten.", example: "1"},
+          %{name: :ports_hdmi, label: "HDMI", required: true, help: "Tel het aantal HDMI-poorten.", example: "1"},
+          %{name: :ports_audio, label: "Audio", required: true, help: "Controleer of er een audiojack/poort is.", example: "Ja, 3,5 mm"},
+          %{name: :ports_sd, label: "SD-kaartlezer", required: true, help: "Noteer of er een SD-slot aanwezig is.", example: "Ja", input: :select, options: ["Ja", "Nee"]}
+        ]},
+        %{title: "Scherm", fields: [
+          %{name: :display_size, label: "Formaat", required: true, help: "Meet diagonaal of zoek in specificaties.", example: "15,6\""},
+          %{name: :display_resolution, label: "Resolutie", required: true, help: "Instellingen → Beeldscherm → Resolutie.", example: "1920 × 1080"},
+          %{name: :display_panel, label: "Paneeltype", required: true, help: "Controleer in fabrikant specificaties.", example: "IPS"},
+          %{name: :display_refresh_rate, label: "Refresh rate", required: true, help: "Instellingen → Geavanceerde beeldscherminstellingen.", example: "60 Hz"}
+        ]},
+        %{title: "Audio", fields: [
+          %{name: :audio_card, label: "Geluidskaart", required: true, help: "PowerShell: `Get-CimInstance Win32_SoundDevice | Select Name`.", example: "Realtek Audio"},
+          %{name: :audio_speakers, label: "Speakers", required: true, help: "Instellingen → Systeem → Geluid.", example: "Interne speakers"},
+          %{name: :audio_microphone, label: "Microfoon", required: true, help: "Instellingen → Systeem → Geluid → Invoer.", example: "Interne microfoon"}
+        ]},
+        %{title: "Webcam", fields: [
+          %{name: :webcam_resolution, label: "Resolutie", required: true, help: "Gebruik camera-app of Apparaatbeheer.", example: "1280 × 720"},
+          %{name: :webcam_microphone, label: "Microfoon aanwezig", required: true, help: "Controleer Apparaatbeheer → Camera's.", example: "Ja", input: :select, options: ["Ja", "Nee"]}
+        ]},
+        %{title: "Besturingssysteem", fields: [
+          %{name: :os_edition, label: "Editie", required: true, help: "Instellingen → Systeem → Info.", example: "Windows 11 Pro"},
+          %{name: :os_version, label: "Versie", required: true, help: "Instellingen → Systeem → Info.", example: "23H2"},
+          %{name: :os_build, label: "Build", required: true, help: "Instellingen → Systeem → Info.", example: "22631"},
+          %{name: :os_licensed, label: "Licentie geactiveerd", required: true, help: "Instellingen → Update & beveiliging → Activering.", example: "Ja", input: :select, options: ["Ja", "Nee"]}
+        ]}
+      ] %>
+
+      <%= for section <- sections do %>
+        <div class="space-y-4 rounded-2xl border border-zinc-100 bg-zinc-50 p-4">
+          <div>
+            <h2 class="text-lg font-semibold text-zinc-900"><%= section.title %></h2>
+          </div>
+          <div class="grid gap-4 sm:grid-cols-2">
+            <%= for field <- section.fields do %>
+              <% form_field = @form[field.name] %>
+              <div>
+                <div class="flex items-center gap-2">
+                  <label class="text-sm font-semibold text-zinc-800" for={form_field.id}>
+                    <%= field[:label] %>
+                    <%= if field[:required] do %>
+                      <span class="text-red-500">*</span>
+                    <% end %>
+                  </label>
+                  <%= if field[:help] do %>
+                    <span class="relative inline-block">
+                      <button
+                        type="button"
+                        id={form_field.id <> "-help-trigger"}
+                        class="inline-flex h-6 w-6 items-center justify-center rounded-full border-2 border-emerald-400 text-emerald-600 transition hover:bg-emerald-50"
+                        phx-hook="FieldHelp"
+                        data-help-title={field[:label]}
+                        data-help-text={field[:help]}
+                      >
+                        ?
+                      </button>
+                    </span>
+                  <% end %>
+                </div>
+                <%= if field[:input] == :select do %>
+                  <select
+                    id={form_field.id}
+                    name={form_field.name}
+                    required={field[:required]}
+                    class="mt-2 w-full rounded-xl border border-zinc-300 px-4 py-2 text-sm text-zinc-900 focus:border-blue-400 focus:outline-none"
+                  >
+                    <%= for option <- field[:options] || [] do %>
+                      <option value={option} selected={form_field.value == option}>
+                        <%= option %>
+                      </option>
+                    <% end %>
+                  </select>
+                <% else %>
+                  <input
+                    type="text"
+                    id={form_field.id}
+                    name={form_field.name}
+                    value={form_field.value}
+                    required={field[:required]}
+                    readonly={field[:readonly]}
+                    class="mt-2 w-full rounded-xl border border-zinc-300 px-4 py-2 text-sm text-zinc-900 focus:border-blue-400 focus:outline-none"
+                  />
+                <% end %>
+                <%= if field[:example] do %>
+                  <p class="mt-1 text-xs text-zinc-500">
+                    Verwacht antwoord:
+                    <span class="font-semibold text-zinc-800"><%= field[:example] %></span>
+                  </p>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <div class="flex justify-end">
+        <button
+          type="submit"
+          class="rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold uppercase tracking-wide text-white shadow-sm transition hover:bg-blue-700"
+        >
+          Opslaan in CouchDB
+        </button>
+      </div>
+    </.form>
+  </section>
+  <div
+    id="help-modal"
+    class="fixed inset-0 z-40 hidden items-center justify-center bg-black/70 p-4 text-sm text-zinc-800"
+    role="dialog"
+    aria-modal="true"
+  >
+    <div class="relative w-full max-w-2xl rounded-2xl bg-white p-6 shadow-2xl">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-[0.2em] text-blue-400">Help</p>
+          <h3 class="text-xl font-semibold text-zinc-900" data-help-title>Veldinformatie</h3>
+        </div>
+        <button type="button" class="text-sm font-semibold text-blue-600" data-help-close>
+          Sluiten
+        </button>
+      </div>
+      <p class="mt-4 whitespace-pre-line text-sm leading-relaxed text-zinc-700" data-help-body>
+        Selecteer een helpknop om instructies te zien.
+      </p>
+      <div class="mt-4 rounded-xl border border-amber-100 bg-amber-50 px-4 py-3 text-xs text-amber-800">
+        Tip: open PowerShell via Win + X → “Windows PowerShell (Admin)” of zoek in Startmenu naar “PowerShell”.
+      </div>
+      <button
+        type="button"
+        class="mt-6 w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold uppercase tracking-wide text-white shadow-sm transition hover:bg-blue-700"
+        data-help-close
+      >
+        Ik heb het begrepen
+      </button>
+    </div>
+  </div>
+</div>

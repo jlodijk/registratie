@@ -1,0 +1,70 @@
+<div class="mx-auto max-w-5xl space-y-6">
+  <section class="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-blue-500">Studenten</p>
+        <h1 class="text-3xl font-semibold text-zinc-900">Overzicht</h1>
+      </div>
+      <.form for={%{}} method="get" action={~p"/studenten/overzicht"} class="flex flex-wrap gap-2">
+        <select
+          name="id"
+          class="w-64 rounded-xl border border-zinc-300 px-4 py-2 text-sm text-zinc-800 focus:border-blue-400 focus:outline-none md:w-80"
+          onchange="this.form.submit()"
+        >
+          <option value="">Kies een student</option>
+          <%= for student <- @students do %>
+            <option value={student["_id"]} selected={student["_id"] == @selected_student_id}>
+              <%= student["name"] %> - <%= student["voornaam"] %> <%= student["achternaam"] %>
+            </option>
+          <% end %>
+        </select>
+        <noscript>
+          <button class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white">Toon</button>
+        </noscript>
+      </.form>
+    </div>
+
+    <%= if @student do %>
+      <div class="mt-6 rounded-2xl border border-zinc-200 bg-zinc-50/80 p-5 grid gap-6 lg:grid-cols-2">
+        <div class="space-y-3">
+          <h2 class="text-xl font-semibold text-zinc-900"><%= @student["voornaam"] %> <%= @student["achternaam"] %> (<%= @student["name"] %>)</h2>
+          <p class="text-sm text-zinc-600"><strong>Status:</strong> <%= @student["status"] || "Onbekend" %></p>
+          <p class="text-sm text-zinc-600"><strong>Opleiding:</strong> <%= @student["opleiding"] %></p>
+          <p class="text-sm text-zinc-600"><strong>Stageperiode:</strong> <%= format_period(@student) %></p>
+          <p class="text-sm text-zinc-600"><strong>Stagedagen:</strong> <%= Enum.join(@student["stageDagen"] || [], ", ") %></p>
+        </div>
+
+        <div class="space-y-2 text-sm text-zinc-600">
+          <p><strong>Email:</strong> <%= @student["email"] %></p>
+          <p><strong>Mobiel:</strong> <%= @student["mobiel"] %></p>
+          <p><strong>Postcode:</strong> <%= @student["postcode"] %></p>
+          <p><strong>Hostname:</strong> <%= @student["hostname"] %></p>
+        </div>
+
+        <div class="lg:col-span-2 rounded-2xl border border-blue-100 bg-white/90 p-4">
+          <h3 class="text-lg font-semibold text-zinc-900">Contactpersoon opleiding</h3>
+          <p class="text-sm text-zinc-500">Contactpersoon uit contact_persoon_school op basis van de opleiding.</p>
+
+          <%= if Enum.empty?(@contact_people || []) do %>
+            <p class="mt-3 text-sm text-zinc-600">Geen contactpersonen gevonden voor deze opleiding.</p>
+          <% else %>
+            <div class="mt-4 grid gap-4 md:grid-cols-2">
+              <%= for contact <- @contact_people do %>
+                <div class="rounded-xl border border-zinc-200 bg-zinc-50 p-4">
+                  <p class="text-base font-semibold text-zinc-900"><%= contact["name"] %></p>
+                  <p class="text-xs uppercase tracking-[0.2em] text-zinc-500">
+                    <%= Enum.join(contact["opleiding"] || [], ", ") %>
+                  </p>
+                  <p class="mt-2 text-sm text-zinc-700"><strong>Tel:</strong> <%= contact["tel"] || "-" %></p>
+                  <p class="text-sm text-zinc-700"><strong>Email:</strong> <%= contact["email"] || "-" %></p>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% else %>
+      <p class="mt-6 text-sm text-zinc-600">Selecteer een student om de gegevens te bekijken.</p>
+    <% end %>
+  </section>
+</div>

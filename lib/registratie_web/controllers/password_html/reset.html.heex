@@ -1,0 +1,48 @@
+<div class="space-y-6 max-w-lg mx-auto">
+  <div>
+    <h1 class="text-2xl font-semibold text-zinc-900">Wachtwoord resetten</h1>
+    <p class="mt-2 text-sm text-zinc-600">
+      Geef een student of gebruiker een nieuw tijdelijk wachtwoord. Bij de eerstvolgende login moet het wachtwoord opnieuw ingesteld worden.
+    </p>
+    <ul class="mt-4 list-disc list-inside text-sm text-zinc-700">
+      <li :for={req <- @requirements}>{req}</li>
+    </ul>
+  </div>
+
+  <.simple_form for={@form} action={~p"/password/reset"} method="post">
+    <.input
+      field={@form[:username]}
+      type="text"
+      label="Gebruikersnaam"
+      required
+      autocomplete="username"
+    />
+    <.input
+      field={@form[:new_password]}
+      type="password"
+      label="Nieuw wachtwoord"
+      required
+      autocomplete="new-password"
+    />
+    <.input
+      field={@form[:confirm_password]}
+      type="password"
+      label="Bevestig wachtwoord"
+      required
+      autocomplete="new-password"
+    />
+    <:actions>
+      <div class="flex flex-col gap-3 w-full">
+        <.button type="submit" class="w-full justify-center">
+          Wachtwoord resetten
+        </.button>
+        <.link
+          href={~p"/home"}
+          class="inline-flex w-full items-center justify-center rounded-full border border-red-200 bg-red-50 px-5 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-100"
+        >
+          Annuleren
+        </.link>
+      </div>
+    </:actions>
+  </.simple_form>
+</div>

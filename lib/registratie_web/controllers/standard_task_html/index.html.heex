@@ -1,0 +1,71 @@
+<div class="mx-auto max-w-4xl space-y-6">
+  <section class="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-blue-500">Taken</p>
+        <h1 class="text-3xl font-semibold text-zinc-900">Standaardtaken beheren</h1>
+        <p class="text-sm text-zinc-600">
+          Begeleiders bepalen hier welke taken als suggestie verschijnen in het takenformulier.
+        </p>
+      </div>
+    </div>
+
+    <.form for={@form} action={~p"/standaard-taken"} method="post" class="mt-6 space-y-4 rounded-2xl border border-blue-100 bg-blue-50/40 p-5">
+      <div class="space-y-2">
+        <label class="text-sm font-semibold text-zinc-700">Nieuwe standaardtaak</label>
+        <div class="flex flex-col gap-3 md:flex-row md:items-center">
+          <input
+            type="text"
+            name="standard_task[taak]"
+            class="w-full rounded-xl border border-zinc-300 px-3 py-2 text-sm text-zinc-800 focus:border-blue-400 focus:outline-none"
+            placeholder="Bijv. Upload stageverslag in OASE"
+            required
+          />
+          <button
+            type="submit"
+            class="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-5 py-2 text-sm font-semibold uppercase tracking-wide text-white shadow-sm transition hover:bg-amber-600 md:w-auto"
+          >
+            <.icon name="hero-plus" class="h-4 w-4" />
+            Toevoegen
+          </button>
+        </div>
+        <p class="text-xs text-zinc-500">
+          Deze lijst wordt gebruikt als datalist in het takenformulier voor studenten.
+        </p>
+      </div>
+    </.form>
+  </section>
+
+  <section class="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-amber-500">Overzicht</p>
+        <h2 class="text-2xl font-semibold text-zinc-900">Standaardtaken (<%= length(@tasks) %>)</h2>
+        <p class="text-sm text-zinc-600">Verwijder taken die niet meer van toepassing zijn.</p>
+      </div>
+    </div>
+
+    <%= if Enum.empty?(@tasks) do %>
+      <p class="mt-4 text-sm text-zinc-600">Er zijn nog geen standaardtaken. Voeg de eerste taak toe bovenaan.</p>
+    <% else %>
+      <ul class="mt-6 divide-y divide-zinc-100">
+        <%= for taak <- @tasks do %>
+          <li class="flex flex-col justify-between gap-3 py-3 md:flex-row md:items-center">
+            <p class="text-base text-zinc-800"><%= taak %></p>
+            <.form for={%{}} method="post" action={~p"/standaard-taken"} class="inline-flex justify-end">
+              <input type="hidden" name="_method" value="delete" />
+              <input type="hidden" name="task" value={taak} />
+              <button
+                type="submit"
+                class="inline-flex items-center gap-2 rounded-xl border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-700 transition hover:bg-red-50"
+              >
+                <.icon name="hero-trash" class="h-4 w-4" />
+                Verwijderen
+              </button>
+            </.form>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  </section>
+</div>

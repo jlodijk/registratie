@@ -1,0 +1,32 @@
+    [33mwarning:[0m Req.post/3 is undefined or private. Did you mean:
+
+          * post/1
+          * post/2
+
+    │
+ 43 │     case Req.post(full_url, body, headers: [{"Content-Type", "application/json"}]) do
+    │ [33m             ~[0m
+    │
+    └─ lib/registratie/auth.ex:43:14: Registratie.Auth.register/2
+
+    [33mwarning:[0m variable "url" is unused (if the variable is not meant to be used, prefix it with an underscore)
+    │
+  9 │     url = Dotenvy.env!("COUCHDB_URL", :string)
+    │ [33m    ~~~[0m
+    │
+    └─ lib/registratie/couch.ex:9:5: Registratie.Couch.client/1
+
+    [33mwarning:[0m unused alias AuthorizeRole
+    │
+  5 │   alias RegistratieWeb.Plugs.AuthorizeRole
+    │ [33m  ~[0m
+    │
+    └─ lib/registratie_web/router.ex:5:3
+
+    [33mwarning:[0m unused alias RequireAuthenticatedUser
+    │
+  4 │   alias RegistratieWeb.Plugs.RequireAuthenticatedUser
+    │ [33m  ~[0m
+    │
+    └─ lib/registratie_web/router.ex:4:3
+

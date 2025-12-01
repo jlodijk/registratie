@@ -1,0 +1,40 @@
+<div class="mx-auto max-w-4xl space-y-8">
+  <section class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+    <div class="flex items-center justify-between gap-4 flex-wrap">
+      <div>
+        <h1 class="text-2xl font-semibold text-zinc-900">Netwerk</h1>
+        <p class="text-sm text-zinc-600">Voor BOL 2 studenten: inventariseer Wi-Fi per ruimte.</p>
+      </div>
+    </div>
+    <div class="mt-6 space-y-3 rounded-2xl border border-blue-200 bg-blue-50 px-5 py-4 text-sm text-blue-900">
+      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-blue-700 flex items-center gap-2">
+        <.icon name="hero-information-circle" class="h-4 w-4" />
+        Helptoets
+      </p>
+      <ul class="list-disc space-y-2 pl-5">
+        <%= for instruction <- @instructions do %>
+          <li><%= instruction %></li>
+        <% end %>
+      </ul>
+    </div>
+    <div class="mt-6 flex flex-wrap gap-3">
+      <.link
+        href={~p"/network-inventarisatie"}
+        class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold uppercase tracking-wide text-white shadow-sm transition hover:bg-emerald-700"
+      >
+        <.icon name="hero-rss" class="h-5 w-5" />
+        Netwerkinventarisatie
+      </.link>
+    </div>
+  </section>
+
+  <section class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm space-y-4">
+    <h2 class="text-xl font-semibold text-zinc-900">Waarom deze gegevens?</h2>
+    <p class="text-sm text-zinc-600">
+      Met deze inventarisatie zie je waar de dekking onvoldoende is en waar aanvullende access points nodig zijn. Noteer daarom per ruimte nauwkeurig de SSID, BSSID, signaalsterkte en voer een korte speedtest uit.
+    </p>
+    <p class="text-sm text-zinc-600">
+      Vul na iedere ruimte meteen het formulier in zodat de resultaten opgeslagen worden in CouchDB en gedeeld kunnen worden met de begeleiders.
+    </p>
+  </section>
+</div>

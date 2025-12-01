@@ -1,0 +1,1073 @@
+2025-11-16 15:57:24.808 [error] ** (ArgumentError) no "app" html template defined for RegistratieWeb.Layouts  (the module exists but does not define app/1 nor render/2)
+    (phoenix_template 1.0.4) lib/phoenix/template.ex:248: Phoenix.Template.render_with_fallback/4
+    (phoenix 1.7.21) lib/phoenix/controller.ex:1000: anonymous fn/5 in Phoenix.Controller.template_render/4
+    (telemetry 1.3.0) /home/hans-odijk/Workspace/elixir/registratie/deps/telemetry/src/telemetry.erl:324: :telemetry.span/3
+    (phoenix 1.7.21) lib/phoenix/controller.ex:987: Phoenix.Controller.render_with_layouts/4
+    (phoenix 1.7.21) lib/phoenix/controller.ex:974: Phoenix.Controller.render_and_send/4
+    (registratie 0.1.0) lib/registratie_web/controllers/login_controller.ex:1: RegistratieWeb.LoginController.action/2
+    (registratie 0.1.0) lib/registratie_web/controllers/login_controller.ex:1: RegistratieWeb.LoginController.phoenix_controller_pipeline/2
+    (phoenix 1.7.21) lib/phoenix/router.ex:484: Phoenix.Router.__call__/5
+    (registratie 0.1.0) lib/registratie_web/endpoint.ex:1: RegistratieWeb.Endpoint.plug_builder_call/2
+    (registratie 0.1.0) deps/plug/lib/plug/debugger.ex:155: RegistratieWeb.Endpoint."call (overridable 3)"/2
+    (registratie 0.1.0) lib/registratie_web/endpoint.ex:1: RegistratieWeb.Endpoint.call/2
+    (phoenix 1.7.21) lib/phoenix/endpoint/sync_code_reload_plug.ex:22: Phoenix.Endpoint.SyncCodeReloadPlug.do_call/4
+    (bandit 1.8.0) lib/bandit/pipeline.ex:131: Bandit.Pipeline.call_plug!/2
+    (bandit 1.8.0) lib/bandit/pipeline.ex:42: Bandit.Pipeline.run/5
+    (bandit 1.8.0) lib/bandit/http1/handler.ex:13: Bandit.HTTP1.Handler.handle_data/3
+    (bandit 1.8.0) lib/bandit/delegating_handler.ex:18: Bandit.DelegatingHandler.handle_data/3
+    (bandit 1.8.0) lib/bandit/delegating_handler.ex:8: Bandit.DelegatingHandler.handle_info/2
+    (stdlib 5.2.3) gen_server.erl:1095: :gen_server.try_handle_info/3
+    (stdlib 5.2.3) gen_server.erl:1183: :gen_server.handle_msg/6
+    (stdlib 5.2.3) proc_lib.erl:241: :proc_lib.init_p_do_apply/3
+ request_id=GHiEmIQmGZbsgzYAAAvD 
+2025-11-16 15:57:30.468 [error] ** (ArgumentError) no "root" html template defined for RegistratieWeb.Layouts  (the module exists but does not define root/1 nor render/2)
+    (phoenix_template 1.0.4) lib/phoenix/template.ex:248: Phoenix.Template.render_with_fallback/4
+    (phoenix_template 1.0.4) lib/phoenix/template.ex:126: Phoenix.Template.render_to_iodata/4
+    (phoenix 1.7.21) lib/phoenix/controller.ex:1008: anonymous fn/5 in Phoenix.Controller.template_render_to_iodata/4
+    (telemetry 1.3.0) /home/hans-odijk/Workspace/elixir/registratie/deps/telemetry/src/telemetry.erl:324: :telemetry.span/3
+    (phoenix 1.7.21) lib/phoenix/controller.ex:974: Phoenix.Controller.render_and_send/4
+    (registratie 0.1.0) lib/registratie_web/controllers/login_controller.ex:1: RegistratieWeb.LoginController.action/2
+    (registratie 0.1.0) lib/registratie_web/controllers/login_controller.ex:1: RegistratieWeb.LoginController.phoenix_controller_pipeline/2
+    (phoenix 1.7.21) lib/phoenix/router.ex:484: Phoenix.Router.__call__/5
+    (registratie 0.1.0) lib/registratie_web/endpoint.ex:1: RegistratieWeb.Endpoint.plug_builder_call/2
+    (registratie 0.1.0) deps/plug/lib/plug/debugger.ex:155: RegistratieWeb.Endpoint."call (overridable 3)"/2
+    (registratie 0.1.0) lib/registratie_web/endpoint.ex:1: RegistratieWeb.Endpoint.call/2
+    (phoenix 1.7.21) lib/phoenix/endpoint/sync_code_reload_plug.ex:22: Phoenix.Endpoint.SyncCodeReloadPlug.do_call/4
+    (bandit 1.8.0) lib/bandit/pipeline.ex:131: Bandit.Pipeline.call_plug!/2
+    (bandit 1.8.0) lib/bandit/pipeline.ex:42: Bandit.Pipeline.run/5
+    (bandit 1.8.0) lib/bandit/http1/handler.ex:13: Bandit.HTTP1.Handler.handle_data/3
+    (bandit 1.8.0) lib/bandit/delegating_handler.ex:18: Bandit.DelegatingHandler.handle_data/3
+    (bandit 1.8.0) lib/bandit/delegating_handler.ex:8: Bandit.DelegatingHandler.handle_info/2
+    (stdlib 5.2.3) gen_server.erl:1095: :gen_server.try_handle_info/3
+    (stdlib 5.2.3) gen_server.erl:1183: :gen_server.handle_msg/6
+    (stdlib 5.2.3) proc_lib.erl:241: :proc_lib.init_p_do_apply/3
+ request_id=GHiEmdfoAJeEezgAAA1j 
+2025-11-17 18:40:30.691 [error] ** (KeyError) key :value not found in: %{
+  id: nil,
+  label: "Naam",
+  name: "contact[name]",
+  type: "text",
+  prompt: nil,
+  errors: [],
+  rest: %{required: true},
+  __changed__: nil,
+  __given__: %{label: "Naam", name: "contact[name]", __changed__: nil},
+  multiple: false
+}
+    (registratie 0.1.0) lib/registratie_web/components/core_components.ex:389: anonymous fn/2 in RegistratieWeb.CoreComponents."input (overridable 1)"/1
+    (phoenix_live_view 1.1.16) lib/phoenix_live_view/engine.ex:130: Phoenix.HTML.Safe.Phoenix.LiveView.Rendered.to_iodata/1
+    (phoenix_live_view 1.1.16) lib/phoenix_live_view/engine.ex:142: Phoenix.HTML.Safe.Phoenix.LiveView.Rendered.to_iodata/3
+    (phoenix 1.7.21) lib/phoenix/controller.ex:1008: anonymous fn/5 in Phoenix.Controller.template_render_to_iodata/4
+    (telemetry 1.3.0) /home/hans-odijk/Workspace/elixir/registratie/deps/telemetry/src/telemetry.erl:324: :telemetry.span/3
+    (phoenix 1.7.21) lib/phoenix/controller.ex:974: Phoenix.Controller.render_and_send/4
+    (registratie 0.1.0) lib/registratie_web/controllers/contact_person_school_controller.ex:1: RegistratieWeb.ContactPersonSchoolController.action/2
+    (registratie 0.1.0) lib/registratie_web/controllers/contact_person_school_controller.ex:1: RegistratieWeb.ContactPersonSchoolController.phoenix_controller_pipeline/2
+    (phoenix 1.7.21) lib/phoenix/router.ex:484: Phoenix.Router.__call__/5
+    (registratie 0.1.0) lib/registratie_web/endpoint.ex:1: RegistratieWeb.Endpoint.plug_builder_call/2
+    (registratie 0.1.0) deps/plug/lib/plug/debugger.ex:155: RegistratieWeb.Endpoint."call (overridable 3)"/2
+    (registratie 0.1.0) lib/registratie_web/endpoint.ex:1: RegistratieWeb.Endpoint.call/2
+    (phoenix 1.7.21) lib/phoenix/endpoint/sync_code_reload_plug.ex:22: Phoenix.Endpoint.SyncCodeReloadPlug.do_call/4
+    (bandit 1.8.0) lib/bandit/pipeline.ex:131: Bandit.Pipeline.call_plug!/2
+    (bandit 1.8.0) lib/bandit/pipeline.ex:42: Bandit.Pipeline.run/5
+    (bandit 1.8.0) lib/bandit/http1/handler.ex:13: Bandit.HTTP1.Handler.handle_data/3
+    (bandit 1.8.0) lib/bandit/delegating_handler.ex:18: Bandit.DelegatingHandler.handle_data/3
+    (bandit 1.8.0) lib/bandit/delegating_handler.ex:8: Bandit.DelegatingHandler.handle_info/2
+    (stdlib 5.2.3) gen_server.erl:1095: :gen_server.try_handle_info/3
+    (stdlib 5.2.3) gen_server.erl:1183: :gen_server.handle_msg/6
+ request_id=GHjcE2LIW4oXrFoAAAFi 
+2025-11-17 18:41:08.774 [error] ** (KeyError) key :value not found in: %{
+  id: nil,
+  label: "Naam",
+  name: "contact[name]",
+  type: "text",
+  prompt: nil,
+  errors: [],
+  rest: %{required: true},
+  __changed__: nil,
+  __given__: %{label: "Naam", name: "contact[name]", __changed__: nil},
+  multiple: false
+}
+    (registratie 0.1.0) lib/registratie_web/components/core_components.ex:389: anonymous fn/2 in RegistratieWeb.CoreComponents."input (overridable 1)"/1
+    (phoenix_live_view 1.1.16) lib/phoenix_live_view/engine.ex:130: Phoenix.HTML.Safe.Phoenix.LiveView.Rendered.to_iodata/1
+    (phoenix_live_view 1.1.16) lib/phoenix_live_view/engine.ex:142: Phoenix.HTML.Safe.Phoenix.LiveView.Rendered.to_iodata/3
+    (phoenix 1.7.21) lib/phoenix/controller.ex:1008: anonymous fn/5 in Phoenix.Controller.template_render_to_iodata/4
+    (telemetry 1.3.0) /home/hans-odijk/Workspace/elixir/registratie/deps/telemetry/src/telemetry.erl:324: :telemetry.span/3
+    (phoenix 1.7.21) lib/phoenix/controller.ex:974: Phoenix.Controller.render_and_send/4
+    (registratie 0.1.0) lib/registratie_web/controllers/contact_person_school_controller.ex:1: RegistratieWeb.ContactPersonSchoolController.action/2
+    (registratie 0.1.0) lib/registratie_web/controllers/contact_person_school_controller.ex:1: RegistratieWeb.ContactPersonSchoolController.phoenix_controller_pipeline/2
+    (phoenix 1.7.21) lib/phoenix/router.ex:484: Phoenix.Router.__call__/5
+    (registratie 0.1.0) lib/registratie_web/endpoint.ex:1: RegistratieWeb.Endpoint.plug_builder_call/2
+    (registratie 0.1.0) deps/plug/lib/plug/debugger.ex:155: RegistratieWeb.Endpoint."call (overridable 3)"/2
+    (registratie 0.1.0) lib/registratie_web/endpoint.ex:1: RegistratieWeb.Endpoint.call/2
+    (phoenix 1.7.21) lib/phoenix/endpoint/sync_code_reload_plug.ex:22: Phoenix.Endpoint.SyncCodeReloadPlug.do_call/4
+    (bandit 1.8.0) lib/bandit/pipeline.ex:131: Bandit.Pipeline.call_plug!/2
+    (bandit 1.8.0) lib/bandit/pipeline.ex:42: Bandit.Pipeline.run/5
+    (bandit 1.8.0) lib/bandit/http1/handler.ex:13: Bandit.HTTP1.Handler.handle_data/3
+    (bandit 1.8.0) lib/bandit/delegating_handler.ex:18: Bandit.DelegatingHandler.handle_data/3
+    (bandit 1.8.0) lib/bandit/delegating_handler.ex:8: Bandit.DelegatingHandler.handle_info/2
+    (stdlib 5.2.3) gen_server.erl:1095: :gen_server.try_handle_info/3
+    (stdlib 5.2.3) gen_server.erl:1183: :gen_server.handle_msg/6
+ request_id=GHjcHF_GOE0KsPMAAAIh 
+2025-11-17 18:46:44.510 [error] ** (KeyError) key :form not found in: %{
+  mode: "new",
+  contacts: [
+    %{
+      "_id" => "template_contact_persoon_school",
+      "_rev" => "1-c4d503dab3ccc397ec75bd62cf077b9d",
+      "email" => "",
+      "name" => "",
+      "opleiding" => [],
+      "tel" => "",
+      "type" => "contact_persoon_school"
+    }
+  ],
+  page_title: "Contactpersonen scholen",
+  current_user: %{
+    "firstPassword" => false,
+    "name" => "admin",
+    "roles" => ["_admin", "admin"]
+  },
+  flash: %{},
+  conn: %Plug.Conn{
+    adapter: {Bandit.Adapter,
+     %Bandit.Adapter{
+       transport: %Bandit.HTTP1.Socket{
+         socket: %ThousandIsland.Socket{
+           socket: #Port<0.51>,
+           transport_module: ThousandIsland.Transports.TCP,
+           read_timeout: 60000,
+           silent_terminate_on_error: false,
+           span: %ThousandIsland.Telemetry{
+             span_name: :connection,
+             telemetry_span_context: #Reference<0.1141805135.858521603.12397>,
+             start_time: -576460360679828491,
+             start_metadata: %{
+               handler: Bandit.DelegatingHandler,
+               remote_port: 49976,
+               remote_address: {127, 0, 0, 1},
+               telemetry_span_context: #Reference<0.1141805135.858521603.12397>,
+               parent_telemetry_span_context: #Reference<0.1141805135.858521603.8578>
+             }
+           }
+         },
+         buffer: "",
+         read_state: :read,
+         write_state: :unsent,
+         unread_content_length: nil,
+         body_encoding: nil,
+         version: :"HTTP/1.1",
+         send_buffer: nil,
+         request_connection_header: "keep-alive",
+         keepalive: nil,
+         opts: %{http: [], websocket: [], http_1: [], http_2: []}
+       },
+       owner_pid: #PID<0.992.0>,
+       method: "GET",
+       status: nil,
+       content_encoding: "gzip",
+       compression_context: nil,
+       upgrade: nil,
+       metrics: %{req_header_end_time: -576460360672855425},
+       opts: %{http: [], websocket: [], http_1: [], http_2: []}
+     }},
+    assigns: %{
+      mode: "new",
+      layout: {RegistratieWeb.Layouts, "app"},
+      contacts: [
+        %{
+          "_id" => "template_contact_persoon_school",
+          "_rev" => "1-c4d503dab3ccc397ec75bd62cf077b9d",
+          "email" => "",
+          "name" => "",
+          "opleiding" => [],
+          "tel" => "",
+          "type" => "contact_persoon_school"
+        }
+      ],
+      page_title: "Contactpersonen scholen",
+      current_user: %{
+        "firstPassword" => false,
+        "name" => "admin",
+        "roles" => ["_admin", "admin"]
+      },
+      flash: %{},
+      selected_id: nil,
+      selected_contact: nil,
+      new_form: %Phoenix.HTML.Form{
+        source: %{},
+        impl: Phoenix.HTML.FormData.Map,
+        id: "contact",
+        name: "contact",
+        data: %{},
+        action: nil,
+        hidden: [],
+        params: %{},
+        errors: [],
+        options: [],
+        index: nil
+      },
+      edit_form: %Phoenix.HTML.Form{
+        source: %{},
+        impl: Phoenix.HTML.FormData.Map,
+        id: "contact",
+        name: "contact",
+        data: %{},
+        action: nil,
+        hidden: [],
+        params: %{},
+        errors: [],
+        options: [],
+        index: nil
+      }
+    },
+    body_params: %{},
+    cookies: %{
+      "_registratie_key" => "SFMyNTY.g3QAAAACbQAAAAtfY3NyZl90b2tlbm0AAAAYNjVHZmZzZG9VeEJ3dFhNa2xpYVRhSU9hbQAAAAxjdXJyZW50X3VzZXJ0AAAAA20AAAANZmlyc3RQYXNzd29yZHcFZmFsc2VtAAAABG5hbWVtAAAABWFkbWlubQAAAAVyb2xlc2wAAAACbQAAAAZfYWRtaW5tAAAABWFkbWluag.E83OdltNS0gqFlPz3kjpisGMOru6TGvI6dKqFjTduiA"
+    },
+    halted: false,
+    host: "localhost",
+    method: "GET",
+    owner: #PID<0.992.0>,
+    params: %{},
+    path_info: ["contactpersonen"],
+    path_params: %{},
+    port: 4000,
+    private: %{
+      :phoenix_live_reload => true,
+      :phoenix_template => "index.html",
+      :phoenix_view => %{
+        "html" => RegistratieWeb.ContactPersonSchoolHTML,
+        "json" => RegistratieWeb.ContactPersonSchoolJSON
+      },
+      RegistratieWeb.Router => [],
+      :phoenix_endpoint => RegistratieWeb.Endpoint,
+      :plug_session_fetch => :done,
+      :plug_session => %{
+        "_csrf_token" => "65GffsdoUxBwtXMkliaTaIOa",
+        "current_user" => %{
+          "firstPassword" => false,
+          "name" => "admin",
+          "roles" => ["_admin", "admin"]
+        }
+      },
+      :before_send => [#Function<0.98198498/1 in Plug.CSRFProtection.call/2>,
+       #Function<4.23985858/1 in Phoenix.Controller.fetch_flash/2>,
+       #Function<0.49469887/1 in Plug.Session.before_send/2>,
+       #Function<0.54455629/1 in Plug.Telemetry.call/2>,
+       #Function<1.47751264/1 in Phoenix.LiveReloader.before_send_inject_reloader/3>],
+      :phoenix_router => RegistratieWeb.Router,
+      :phoenix_request_logger => {"request_logger", "request_logger"},
+      :phoenix_action => :index,
+      :phoenix_layout => %{"html" => {RegistratieWeb.Layouts, :app}},
+      :phoenix_controller => RegistratieWeb.ContactPersonSchoolController,
+      :phoenix_format => "html",
+      :phoenix_root_layout => %{_: {RegistratieWeb.Layouts, :root}}
+    },
+    query_params: %{},
+    query_string: "",
+    remote_ip: {127, 0, 0, 1},
+    req_cookies: %{
+      "_registratie_key" => "SFMyNTY.g3QAAAACbQAAAAtfY3NyZl90b2tlbm0AAAAYNjVHZmZzZG9VeEJ3dFhNa2xpYVRhSU9hbQAAAAxjdXJyZW50X3VzZXJ0AAAAA20AAAANZmlyc3RQYXNzd29yZHcFZmFsc2VtAAAABG5hbWVtAAAABWFkbWlubQAAAAVyb2xlc2wAAAACbQAAAAZfYWRtaW5tAAAABWFkbWluag.E83OdltNS0gqFlPz3kjpisGMOru6TGvI6dKqFjTduiA"
+    },
+    req_headers: [
+      {"host", "localhost:4000"},
+      {"user-agent",
+       "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:145.0) Gecko/20100101 Firefox/145.0"},
+      {"accept",
+       "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"},
+      {"accept-language", "nl,en-US;q=0.7,en;q=0.3"},
+      {"accept-encoding", "gzip, deflate, br, zstd"},
+      {"referer", "http://localhost:4000/home"},
+      {"dnt", "1"},
+      {"sec-gpc", "1"},
+      {"connection", "keep-alive"},
+      {"cookie",
+       "_registratie_key=SFMyNTY.g3QAAAACbQAAAAtfY3NyZl90b2tlbm0AAAAYNjVHZmZzZG9VeEJ3dFhNa2xpYVRhSU9hbQAAAAxjdXJyZW50X3VzZXJ0AAAAA20AAAANZmlyc3RQYXNzd29yZHcFZmFsc2VtAAAABG5hbWVtAAAABWFkbWlubQAAAAVyb2xlc2wAAAACbQAAAAZfYWRtaW5tAAAABWFkbWluag.E83OdltNS0gqFlPz3kjpisGMOru6TGvI6dKqFjTduiA"},
+      {"upgrade-insecure-requests", "1"},
+      {"sec-fetch-dest", "document"},
+      {"sec-fetch-mode", "navigate"},
+      {"sec-fetch-site", "same-origin"},
+      {"priority", "u=0, i"}
+    ],
+    request_path: "/contactpersonen",
+    resp_body: nil,
+    resp_cookies: %{},
+    resp_headers: [
+      {"cache-control", "max-age=0, private, must-revalidate"},
+      {"x-request-id", "GHjcapEXpLXsih0AAAlC"},
+      {"referrer-policy", "strict-origin-when-cross-origin"},
+      {"x-content-type-options", "nosniff"},
+      {"x-download-options", "noopen"},
+      {"x-frame-options", "SAMEORIGIN"},
+      {"x-permitted-cross-domain-policies", "none"}
+    ],
+    scheme: :http,
+    script_name: [],
+    secret_key_base: :...,
+    state: :unset,
+    status: nil
+  },
+  selected_id: nil,
+  selected_contact: nil,
+  new_form: %Phoenix.HTML.Form{
+    source: %{},
+    impl: Phoenix.HTML.FormData.Map,
+    id: "contact",
+    name: "contact",
+    data: %{},
+    action: nil,
+    hidden: [],
+    params: %{},
+    errors: [],
+    options: [],
+    index: nil
+  },
+  edit_form: %Phoenix.HTML.Form{
+    source: %{},
+    impl: Phoenix.HTML.FormData.Map,
+    id: "contact",
+    name: "contact",
+    data: %{},
+    action: nil,
+    hidden: [],
+    params: %{},
+    errors: [],
+    options: [],
+    index: nil
+  }
+}
+    (registratie 0.1.0) lib/registratie_web/controllers/contact_person_school_html/index.html.heex:31: anonymous fn/2 in RegistratieWeb.ContactPersonSchoolHTML.index/1
+    (phoenix_live_view 1.1.16) lib/phoenix_live_view/engine.ex:130: Phoenix.HTML.Safe.Phoenix.LiveView.Rendered.to_iodata/1
+    (phoenix_live_view 1.1.16) lib/phoenix_live_view/engine.ex:142: Phoenix.HTML.Safe.Phoenix.LiveView.Rendered.to_iodata/3
+    (phoenix 1.7.21) lib/phoenix/controller.ex:1008: ano (truncated) request_id=GHjcapEXpLXsih0AAAlC 
+2025-11-17 19:00:16.728 [error] ** (KeyError) key :myself not found in: %{
+  mode: "new",
+  contacts: [
+    %{
+      "_id" => "template_contact_persoon_school",
+      "_rev" => "1-c4d503dab3ccc397ec75bd62cf077b9d",
+      "email" => "",
+      "name" => "",
+      "opleiding" => [],
+      "tel" => "",
+      "type" => "contact_persoon_school"
+    },
+    %{
+      "_id" => "Michel",
+      "_rev" => "1-acf98f2e4b2f5b977ce1baff9c40393b",
+      "email" => "m.materman@mboutrecht.nl",
+      "name" => "Michel Materman",
+      "opleiding" => ["Bol 2", "Bol 3"],
+      "tel" => "0611901842",
+      "type" => "contact_persoon_school"
+    }
+  ],
+  page_title: "Contactpersonen scholen",
+  current_user: %{
+    "firstPassword" => false,
+    "name" => "admin",
+    "roles" => ["_admin", "admin"]
+  },
+  flash: %{},
+  conn: %Plug.Conn{
+    adapter: {Bandit.Adapter,
+     %Bandit.Adapter{
+       transport: %Bandit.HTTP1.Socket{
+         socket: %ThousandIsland.Socket{
+           socket: #Port<0.130>,
+           transport_module: ThousandIsland.Transports.TCP,
+           read_timeout: 60000,
+           silent_terminate_on_error: false,
+           span: %ThousandIsland.Telemetry{
+             span_name: :connection,
+             telemetry_span_context: #Reference<0.1141805135.858521601.17179>,
+             start_time: -576459600717808477,
+             start_metadata: %{
+               handler: Bandit.DelegatingHandler,
+               remote_port: 42686,
+               remote_address: {127, 0, 0, 1},
+               telemetry_span_context: #Reference<0.1141805135.858521601.17179>,
+               parent_telemetry_span_context: #Reference<0.1141805135.858521603.8615>
+             }
+           }
+         },
+         buffer: "",
+         read_state: :read,
+         write_state: :unsent,
+         unread_content_length: nil,
+         body_encoding: nil,
+         version: :"HTTP/1.1",
+         send_buffer: nil,
+         request_connection_header: "keep-alive",
+         keepalive: nil,
+         opts: %{http: [], websocket: [], http_1: [], http_2: []}
+       },
+       owner_pid: #PID<0.1605.0>,
+       method: "GET",
+       status: nil,
+       content_encoding: "gzip",
+       compression_context: nil,
+       upgrade: nil,
+       metrics: %{req_header_end_time: -576459548356537959},
+       opts: %{http: [], websocket: [], http_1: [], http_2: []}
+     }},
+    assigns: %{
+      mode: "new",
+      layout: {RegistratieWeb.Layouts, "app"},
+      contacts: [
+        %{
+          "_id" => "template_contact_persoon_school",
+          "_rev" => "1-c4d503dab3ccc397ec75bd62cf077b9d",
+          "email" => "",
+          "name" => "",
+          "opleiding" => [],
+          "tel" => "",
+          "type" => "contact_persoon_school"
+        },
+        %{
+          "_id" => "Michel",
+          "_rev" => "1-acf98f2e4b2f5b977ce1baff9c40393b",
+          "email" => "m.materman@mboutrecht.nl",
+          "name" => "Michel Materman",
+          "opleiding" => ["Bol 2", "Bol 3"],
+          "tel" => "0611901842",
+          "type" => "contact_persoon_school"
+        }
+      ],
+      page_title: "Contactpersonen scholen",
+      current_user: %{
+        "firstPassword" => false,
+        "name" => "admin",
+        "roles" => ["_admin", "admin"]
+      },
+      flash: %{},
+      selected_id: nil,
+      selected_contact: nil,
+      new_form: %Phoenix.HTML.Form{
+        source: %{},
+        impl: Phoenix.HTML.FormData.Map,
+        id: "contact",
+        name: "contact",
+        data: %{},
+        action: nil,
+        hidden: [],
+        params: %{},
+        errors: [],
+        options: [],
+        index: nil
+      },
+      edit_form: %Phoenix.HTML.Form{
+        source: %{},
+        impl: Phoenix.HTML.FormData.Map,
+        id: "contact",
+        name: "contact",
+        data: %{},
+        action: nil,
+        hidden: [],
+        params: %{},
+        errors: [],
+        options: [],
+        index: nil
+      }
+    },
+    body_params: %{},
+    cookies: %{
+      "_registratie_key" => "SFMyNTY.g3QAAAACbQAAAAtfY3NyZl90b2tlbm0AAAAYNjVHZmZzZG9VeEJ3dFhNa2xpYVRhSU9hbQAAAAxjdXJyZW50X3VzZXJ0AAAAA20AAAANZmlyc3RQYXNzd29yZHcFZmFsc2VtAAAABG5hbWVtAAAABWFkbWlubQAAAAVyb2xlc2wAAAACbQAAAAZfYWRtaW5tAAAABWFkbWluag.E83OdltNS0gqFlPz3kjpisGMOru6TGvI6dKqFjTduiA"
+    },
+    halted: false,
+    host: "localhost",
+    method: "GET",
+    owner: #PID<0.1605.0>,
+    params: %{"mode" => "new"},
+    path_info: ["contactpersonen"],
+    path_params: %{},
+    port: 4000,
+    private: %{
+      :phoenix_live_reload => true,
+      :phoenix_template => "index.html",
+      :phoenix_view => %{
+        "html" => RegistratieWeb.ContactPersonSchoolHTML,
+        "json" => RegistratieWeb.ContactPersonSchoolJSON
+      },
+      RegistratieWeb.Router => [],
+      :phoenix_endpoint => RegistratieWeb.Endpoint,
+      :plug_session_fetch => :done,
+      :plug_session => %{
+        "_csrf_token" => "65GffsdoUxBwtXMkliaTaIOa",
+        "current_user" => %{
+          "firstPassword" => false,
+          "name" => "admin",
+          "roles" => ["_admin", "admin"]
+        }
+      },
+      :before_send => [#Function<0.98198498/1 in Plug.CSRFProtection.call/2>,
+       #Function<4.23985858/1 in Phoenix.Controller.fetch_flash/2>,
+       #Function<0.49469887/1 in Plug.Session.before_send/2>,
+       #Function<0.54455629/1 in Plug.Telemetry.call/2>,
+       #Function<1.47751264/1 in Phoenix.LiveReloader.before_send_inject_reloader/3>],
+      :phoenix_router => RegistratieWeb.Router,
+      :phoenix_request_logger => {"request_logger", "request_logger"},
+      :phoenix_action => :index,
+      :phoenix_layout => %{"html" => {RegistratieWeb.Layouts, :app}},
+      :phoenix_controller => RegistratieWeb.ContactPersonSchoolController,
+      :phoenix_format => "html",
+      :phoenix_root_layout => %{_: {RegistratieWeb.Layouts, :root}}
+    },
+    query_params: %{"mode" => "new"},
+    query_string: "mode=new",
+    remote_ip: {127, 0, 0, 1},
+    req_cookies: %{
+      "_registratie_key" => "SFMyNTY.g3QAAAACbQAAAAtfY3NyZl90b2tlbm0AAAAYNjVHZmZzZG9VeEJ3dFhNa2xpYVRhSU9hbQAAAAxjdXJyZW50X3VzZXJ0AAAAA20AAAANZmlyc3RQYXNzd29yZHcFZmFsc2VtAAAABG5hbWVtAAAABWFkbWlubQAAAAVyb2xlc2wAAAACbQAAAAZfYWRtaW5tAAAABWFkbWluag.E83OdltNS0gqFlPz3kjpisGMOru6TGvI6dKqFjTduiA"
+    },
+    req_headers: [
+      {"host", "localhost:4000"},
+      {"user-agent",
+       "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:145.0) Gecko/20100101 Firefox/145.0"},
+      {"accept",
+       "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"},
+      {"accept-language", "nl,en-US;q=0.7,en;q=0.3"},
+      {"accept-encoding", "gzip, deflate, br, zstd"},
+      {"referer", "http://localhost:4000/contactpersonen?mode=edit"},
+      {"dnt", "1"},
+      {"sec-gpc", "1"},
+      {"connection", "keep-alive"},
+      {"cookie",
+       "_registratie_key=SFMyNTY.g3QAAAACbQAAAAtfY3NyZl90b2tlbm0AAAAYNjVHZmZzZG9VeEJ3dFhNa2xpYVRhSU9hbQAAAAxjdXJyZW50X3VzZXJ0AAAAA20AAAANZmlyc3RQYXNzd29yZHcFZmFsc2VtAAAABG5hbWVtAAAABWFkbWlubQAAAAVyb2xlc2wAAAACbQAAAAZfYWRtaW5tAAAABWFkbWluag.E83OdltNS0gqFlPz3kjpisGMOru6TGvI6dKqFjTduiA"},
+      {"upgrade-insecure-requests", "1"},
+      {"sec-fetch-dest", "document"},
+      {"sec-fetch-mode", "navigate"},
+      {"sec-fetch-site", "same-origin"},
+      {"priority", "u=4"}
+    ],
+    request_path: "/contactpersonen",
+    resp_body: nil,
+    resp_cookies: %{},
+    resp_headers: [
+      {"cache-control", "max-age=0, private, must-revalidate"},
+      {"x-request-id", "GHjdJ6jc60GdyZoAAAlB"},
+      {"referrer-policy", "strict-origin-when-cross-origin"},
+      {"x-content-type-options", "nosniff"},
+      {"x-download-options", "noopen"},
+      {"x-frame-options", "SAMEORIGIN"},
+      {"x-permitted-cross-domain-policies", "none"}
+    ],
+    scheme: :http,
+    script_name: [],
+    secret_key_base: :...,
+    state: :unset,
+    status: nil
+  },
+  selected_id: nil,
+  selected_contact: nil,
+  new_form: %Phoenix.HTML.Form{
+    source: %{},
+    impl: Phoenix.HTML.FormData.Map,
+    id: "contact",
+    name: "contact",
+    data: %{},
+    action: nil,
+    hidden: [],
+    params: %{},
+    errors: [],
+    options: [],
+    index: nil
+  },
+  edit_form: %Phoenix.HTML.Form{
+    source: %{},
+    (truncated) request_id=GHjdJ6jc60GdyZoAAAlB 
+2025-11-17 19:00:34.741 [error] ** (KeyError) key :myself not found in: %{
+  mode: "new",
+  contacts: [
+    %{
+      "_id" => "template_contact_persoon_school",
+      "_rev" => "1-c4d503dab3ccc397ec75bd62cf077b9d",
+      "email" => "",
+      "name" => "",
+      "opleiding" => [],
+      "tel" => "",
+      "type" => "contact_persoon_school"
+    },
+    %{
+      "_id" => "Michel",
+      "_rev" => "1-acf98f2e4b2f5b977ce1baff9c40393b",
+      "email" => "m.materman@mboutrecht.nl",
+      "name" => "Michel Materman",
+      "opleiding" => ["Bol 2", "Bol 3"],
+      "tel" => "0611901842",
+      "type" => "contact_persoon_school"
+    }
+  ],
+  page_title: "Contactpersonen scholen",
+  current_user: %{
+    "firstPassword" => false,
+    "name" => "admin",
+    "roles" => ["_admin", "admin"]
+  },
+  flash: %{},
+  conn: %Plug.Conn{
+    adapter: {Bandit.Adapter,
+     %Bandit.Adapter{
+       transport: %Bandit.HTTP1.Socket{
+         socket: %ThousandIsland.Socket{
+           socket: #Port<0.124>,
+           transport_module: ThousandIsland.Transports.TCP,
+           read_timeout: 60000,
+           silent_terminate_on_error: false,
+           span: %ThousandIsland.Telemetry{
+             span_name: :connection,
+             telemetry_span_context: #Reference<0.1141805135.858521601.16528>,
+             start_time: -576459601835893568,
+             start_metadata: %{
+               handler: Bandit.DelegatingHandler,
+               remote_port: 42682,
+               remote_address: {127, 0, 0, 1},
+               telemetry_span_context: #Reference<0.1141805135.858521601.16528>,
+               parent_telemetry_span_context: #Reference<0.1141805135.858521603.8613>
+             }
+           }
+         },
+         buffer: "",
+         read_state: :read,
+         write_state: :unsent,
+         unread_content_length: nil,
+         body_encoding: nil,
+         version: :"HTTP/1.1",
+         send_buffer: nil,
+         request_connection_header: "keep-alive",
+         keepalive: nil,
+         opts: %{http: [], websocket: [], http_1: [], http_2: []}
+       },
+       owner_pid: #PID<0.1577.0>,
+       method: "GET",
+       status: nil,
+       content_encoding: "gzip",
+       compression_context: nil,
+       upgrade: nil,
+       metrics: %{req_header_end_time: -576459529966016267},
+       opts: %{http: [], websocket: [], http_1: [], http_2: []}
+     }},
+    assigns: %{
+      mode: "new",
+      layout: {RegistratieWeb.Layouts, "app"},
+      contacts: [
+        %{
+          "_id" => "template_contact_persoon_school",
+          "_rev" => "1-c4d503dab3ccc397ec75bd62cf077b9d",
+          "email" => "",
+          "name" => "",
+          "opleiding" => [],
+          "tel" => "",
+          "type" => "contact_persoon_school"
+        },
+        %{
+          "_id" => "Michel",
+          "_rev" => "1-acf98f2e4b2f5b977ce1baff9c40393b",
+          "email" => "m.materman@mboutrecht.nl",
+          "name" => "Michel Materman",
+          "opleiding" => ["Bol 2", "Bol 3"],
+          "tel" => "0611901842",
+          "type" => "contact_persoon_school"
+        }
+      ],
+      page_title: "Contactpersonen scholen",
+      current_user: %{
+        "firstPassword" => false,
+        "name" => "admin",
+        "roles" => ["_admin", "admin"]
+      },
+      flash: %{},
+      selected_id: nil,
+      selected_contact: nil,
+      new_form: %Phoenix.HTML.Form{
+        source: %{},
+        impl: Phoenix.HTML.FormData.Map,
+        id: "contact",
+        name: "contact",
+        data: %{},
+        action: nil,
+        hidden: [],
+        params: %{},
+        errors: [],
+        options: [],
+        index: nil
+      },
+      edit_form: %Phoenix.HTML.Form{
+        source: %{},
+        impl: Phoenix.HTML.FormData.Map,
+        id: "contact",
+        name: "contact",
+        data: %{},
+        action: nil,
+        hidden: [],
+        params: %{},
+        errors: [],
+        options: [],
+        index: nil
+      }
+    },
+    body_params: %{},
+    cookies: %{
+      "_registratie_key" => "SFMyNTY.g3QAAAACbQAAAAtfY3NyZl90b2tlbm0AAAAYNjVHZmZzZG9VeEJ3dFhNa2xpYVRhSU9hbQAAAAxjdXJyZW50X3VzZXJ0AAAAA20AAAANZmlyc3RQYXNzd29yZHcFZmFsc2VtAAAABG5hbWVtAAAABWFkbWlubQAAAAVyb2xlc2wAAAACbQAAAAZfYWRtaW5tAAAABWFkbWluag.E83OdltNS0gqFlPz3kjpisGMOru6TGvI6dKqFjTduiA"
+    },
+    halted: false,
+    host: "localhost",
+    method: "GET",
+    owner: #PID<0.1577.0>,
+    params: %{"mode" => "new"},
+    path_info: ["contactpersonen"],
+    path_params: %{},
+    port: 4000,
+    private: %{
+      :phoenix_live_reload => true,
+      :phoenix_template => "index.html",
+      :phoenix_view => %{
+        "html" => RegistratieWeb.ContactPersonSchoolHTML,
+        "json" => RegistratieWeb.ContactPersonSchoolJSON
+      },
+      RegistratieWeb.Router => [],
+      :phoenix_endpoint => RegistratieWeb.Endpoint,
+      :plug_session_fetch => :done,
+      :plug_session => %{
+        "_csrf_token" => "65GffsdoUxBwtXMkliaTaIOa",
+        "current_user" => %{
+          "firstPassword" => false,
+          "name" => "admin",
+          "roles" => ["_admin", "admin"]
+        }
+      },
+      :before_send => [#Function<0.98198498/1 in Plug.CSRFProtection.call/2>,
+       #Function<4.23985858/1 in Phoenix.Controller.fetch_flash/2>,
+       #Function<0.49469887/1 in Plug.Session.before_send/2>,
+       #Function<0.54455629/1 in Plug.Telemetry.call/2>,
+       #Function<1.47751264/1 in Phoenix.LiveReloader.before_send_inject_reloader/3>],
+      :phoenix_router => RegistratieWeb.Router,
+      :phoenix_request_logger => {"request_logger", "request_logger"},
+      :phoenix_action => :index,
+      :phoenix_layout => %{"html" => {RegistratieWeb.Layouts, :app}},
+      :phoenix_controller => RegistratieWeb.ContactPersonSchoolController,
+      :phoenix_format => "html",
+      :phoenix_root_layout => %{_: {RegistratieWeb.Layouts, :root}}
+    },
+    query_params: %{"mode" => "new"},
+    query_string: "mode=new",
+    remote_ip: {127, 0, 0, 1},
+    req_cookies: %{
+      "_registratie_key" => "SFMyNTY.g3QAAAACbQAAAAtfY3NyZl90b2tlbm0AAAAYNjVHZmZzZG9VeEJ3dFhNa2xpYVRhSU9hbQAAAAxjdXJyZW50X3VzZXJ0AAAAA20AAAANZmlyc3RQYXNzd29yZHcFZmFsc2VtAAAABG5hbWVtAAAABWFkbWlubQAAAAVyb2xlc2wAAAACbQAAAAZfYWRtaW5tAAAABWFkbWluag.E83OdltNS0gqFlPz3kjpisGMOru6TGvI6dKqFjTduiA"
+    },
+    req_headers: [
+      {"host", "localhost:4000"},
+      {"user-agent",
+       "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:145.0) Gecko/20100101 Firefox/145.0"},
+      {"accept",
+       "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"},
+      {"accept-language", "nl,en-US;q=0.7,en;q=0.3"},
+      {"accept-encoding", "gzip, deflate, br, zstd"},
+      {"referer", "http://localhost:4000/contactpersonen?mode=edit"},
+      {"dnt", "1"},
+      {"sec-gpc", "1"},
+      {"connection", "keep-alive"},
+      {"cookie",
+       "_registratie_key=SFMyNTY.g3QAAAACbQAAAAtfY3NyZl90b2tlbm0AAAAYNjVHZmZzZG9VeEJ3dFhNa2xpYVRhSU9hbQAAAAxjdXJyZW50X3VzZXJ0AAAAA20AAAANZmlyc3RQYXNzd29yZHcFZmFsc2VtAAAABG5hbWVtAAAABWFkbWlubQAAAAVyb2xlc2wAAAACbQAAAAZfYWRtaW5tAAAABWFkbWluag.E83OdltNS0gqFlPz3kjpisGMOru6TGvI6dKqFjTduiA"},
+      {"upgrade-insecure-requests", "1"},
+      {"sec-fetch-dest", "document"},
+      {"sec-fetch-mode", "navigate"},
+      {"sec-fetch-site", "same-origin"},
+      {"priority", "u=4"}
+    ],
+    request_path: "/contactpersonen",
+    resp_body: nil,
+    resp_cookies: %{},
+    resp_headers: [
+      {"cache-control", "max-age=0, private, must-revalidate"},
+      {"x-request-id", "GHjdK-BkPLNryD8AABAi"},
+      {"referrer-policy", "strict-origin-when-cross-origin"},
+      {"x-content-type-options", "nosniff"},
+      {"x-download-options", "noopen"},
+      {"x-frame-options", "SAMEORIGIN"},
+      {"x-permitted-cross-domain-policies", "none"}
+    ],
+    scheme: :http,
+    script_name: [],
+    secret_key_base: :...,
+    state: :unset,
+    status: nil
+  },
+  selected_id: nil,
+  selected_contact: nil,
+  new_form: %Phoenix.HTML.Form{
+    source: %{},
+    impl: Phoenix.HTML.FormData.Map,
+    id: "contact",
+    name: "contact",
+    data: %{},
+    action: nil,
+    hidden: [],
+    params: %{},
+    errors: [],
+    options: [],
+    index: nil
+  },
+  edit_form: %Phoenix.HTML.Form{
+    source: %{},
+    (truncated) request_id=GHjdK-BkPLNryD8AABAi 
+2025-11-17 19:46:32.951 [error] ** (ArgumentError) invalid strftime format: %e
+    (elixir 1.18.4) lib/calendar.ex:916: Calendar.format_modifiers/6
+    (elixir 1.18.4) lib/calendar.ex:577: Calendar.strftime/3
+    lib/registratie_web/controllers/student_overview_html.ex:21: RegistratieWeb.StudentOverviewHTML.format_date/1
+    lib/registratie_web/controllers/student_overview_html.ex:7: RegistratieWeb.StudentOverviewHTML.format_period/1
+    lib/registratie_web/controllers/student_overview_html/index.html.heex:33: anonymous fn/2 in RegistratieWeb.StudentOverviewHTML.index/1
+    (phoenix_live_view 1.1.16) lib/phoenix_live_view/engine.ex:130: Phoenix.HTML.Safe.Phoenix.LiveView.Rendered.to_iodata/1
+    (phoenix_live_view 1.1.16) lib/phoenix_live_view/engine.ex:142: Phoenix.HTML.Safe.Phoenix.LiveView.Rendered.to_iodata/3
+    (phoenix 1.7.21) lib/phoenix/controller.ex:1008: anonymous fn/5 in Phoenix.Controller.template_render_to_iodata/4
+    (telemetry 1.3.0) /home/hans-odijk/Workspace/elixir/registratie/deps/telemetry/src/telemetry.erl:324: :telemetry.span/3
+    (phoenix 1.7.21) lib/phoenix/controller.ex:974: Phoenix.Controller.render_and_send/4
+    lib/registratie_web/controllers/student_overview_controller.ex:1: RegistratieWeb.StudentOverviewController.action/2
+    lib/registratie_web/controllers/student_overview_controller.ex:1: RegistratieWeb.StudentOverviewController.phoenix_controller_pipeline/2
+    (phoenix 1.7.21) lib/phoenix/router.ex:484: Phoenix.Router.__call__/5
+    (registratie 0.1.0) lib/registratie_web/endpoint.ex:1: RegistratieWeb.Endpoint.plug_builder_call/2
+    (registratie 0.1.0) deps/plug/lib/plug/debugger.ex:155: RegistratieWeb.Endpoint."call (overridable 3)"/2
+    (registratie 0.1.0) lib/registratie_web/endpoint.ex:1: RegistratieWeb.Endpoint.call/2
+    (phoenix 1.7.21) lib/phoenix/endpoint/sync_code_reload_plug.ex:22: Phoenix.Endpoint.SyncCodeReloadPlug.do_call/4
+    (bandit 1.8.0) lib/bandit/pipeline.ex:131: Bandit.Pipeline.call_plug!/2
+    (bandit 1.8.0) lib/bandit/pipeline.ex:42: Bandit.Pipeline.run/5
+    (bandit 1.8.0) lib/bandit/http1/handler.ex:13: Bandit.HTTP1.Handler.handle_data/3
+ request_id=GHjfrg4CNEnZaUAAACUC 
+2025-11-17 19:53:43.130 [error] ** (ArgumentError) invalid strftime format: %e
+    (elixir 1.18.4) lib/calendar.ex:916: Calendar.format_modifiers/6
+    (elixir 1.18.4) lib/calendar.ex:577: Calendar.strftime/3
+    (registratie 0.1.0) lib/registratie_web/controllers/student_overview_html.ex:21: RegistratieWeb.StudentOverviewHTML.format_date/1
+    (registratie 0.1.0) lib/registratie_web/controllers/student_overview_html.ex:7: RegistratieWeb.StudentOverviewHTML.format_period/1
+    (registratie 0.1.0) lib/registratie_web/controllers/student_overview_html/index.html.heex:33: anonymous fn/2 in RegistratieWeb.StudentOverviewHTML.index/1
+    (phoenix_live_view 1.1.16) lib/phoenix_live_view/engine.ex:130: Phoenix.HTML.Safe.Phoenix.LiveView.Rendered.to_iodata/1
+    (phoenix_live_view 1.1.16) lib/phoenix_live_view/engine.ex:142: Phoenix.HTML.Safe.Phoenix.LiveView.Rendered.to_iodata/3
+    (phoenix 1.7.21) lib/phoenix/controller.ex:1008: anonymous fn/5 in Phoenix.Controller.template_render_to_iodata/4
+    (telemetry 1.3.0) /home/hans-odijk/Workspace/elixir/registratie/deps/telemetry/src/telemetry.erl:324: :telemetry.span/3
+    (phoenix 1.7.21) lib/phoenix/controller.ex:974: Phoenix.Controller.render_and_send/4
+    (registratie 0.1.0) lib/registratie_web/controllers/student_overview_controller.ex:1: RegistratieWeb.StudentOverviewController.action/2
+    (registratie 0.1.0) lib/registratie_web/controllers/student_overview_controller.ex:1: RegistratieWeb.StudentOverviewController.phoenix_controller_pipeline/2
+    (phoenix 1.7.21) lib/phoenix/router.ex:484: Phoenix.Router.__call__/5
+    (registratie 0.1.0) lib/registratie_web/endpoint.ex:1: RegistratieWeb.Endpoint.plug_builder_call/2
+    (registratie 0.1.0) deps/plug/lib/plug/debugger.ex:155: RegistratieWeb.Endpoint."call (overridable 3)"/2
+    (registratie 0.1.0) lib/registratie_web/endpoint.ex:1: RegistratieWeb.Endpoint.call/2
+    (phoenix 1.7.21) lib/phoenix/endpoint/sync_code_reload_plug.ex:22: Phoenix.Endpoint.SyncCodeReloadPlug.do_call/4
+    (bandit 1.8.0) lib/bandit/pipeline.ex:131: Bandit.Pipeline.call_plug!/2
+    (bandit 1.8.0) lib/bandit/pipeline.ex:42: Bandit.Pipeline.run/5
+    (bandit 1.8.0) lib/bandit/http1/handler.ex:13: Bandit.HTTP1.Handler.handle_data/3
+ request_id=GHjgEjNjZmLdnXEAAASi 
+2025-11-17 19:55:03.929 [error] ** (ArgumentError) invalid strftime format: %e
+    (elixir 1.18.4) lib/calendar.ex:916: Calendar.format_modifiers/6
+    (elixir 1.18.4) lib/calendar.ex:577: Calendar.strftime/3
+    (registratie 0.1.0) lib/registratie_web/controllers/student_overview_html.ex:21: RegistratieWeb.StudentOverviewHTML.format_date/1
+    (registratie 0.1.0) lib/registratie_web/controllers/student_overview_html.ex:7: RegistratieWeb.StudentOverviewHTML.format_period/1
+    (registratie 0.1.0) lib/registratie_web/controllers/student_overview_html/index.html.heex:33: anonymous fn/2 in RegistratieWeb.StudentOverviewHTML.index/1
+    (phoenix_live_view 1.1.16) lib/phoenix_live_view/engine.ex:130: Phoenix.HTML.Safe.Phoenix.LiveView.Rendered.to_iodata/1
+    (phoenix_live_view 1.1.16) lib/phoenix_live_view/engine.ex:142: Phoenix.HTML.Safe.Phoenix.LiveView.Rendered.to_iodata/3
+    (phoenix 1.7.21) lib/phoenix/controller.ex:1008: anonymous fn/5 in Phoenix.Controller.template_render_to_iodata/4
+    (telemetry 1.3.0) /home/hans-odijk/Workspace/elixir/registratie/deps/telemetry/src/telemetry.erl:324: :telemetry.span/3
+    (phoenix 1.7.21) lib/phoenix/controller.ex:974: Phoenix.Controller.render_and_send/4
+    (registratie 0.1.0) lib/registratie_web/controllers/student_overview_controller.ex:1: RegistratieWeb.StudentOverviewController.action/2
+    (registratie 0.1.0) lib/registratie_web/controllers/student_overview_controller.ex:1: RegistratieWeb.StudentOverviewController.phoenix_controller_pipeline/2
+    (phoenix 1.7.21) lib/phoenix/router.ex:484: Phoenix.Router.__call__/5
+    (registratie 0.1.0) lib/registratie_web/endpoint.ex:1: RegistratieWeb.Endpoint.plug_builder_call/2
+    (registratie 0.1.0) deps/plug/lib/plug/debugger.ex:155: RegistratieWeb.Endpoint."call (overridable 3)"/2
+    (registratie 0.1.0) lib/registratie_web/endpoint.ex:1: RegistratieWeb.Endpoint.call/2
+    (phoenix 1.7.21) lib/phoenix/endpoint/sync_code_reload_plug.ex:22: Phoenix.Endpoint.SyncCodeReloadPlug.do_call/4
+    (bandit 1.8.0) lib/bandit/pipeline.ex:131: Bandit.Pipeline.call_plug!/2
+    (bandit 1.8.0) lib/bandit/pipeline.ex:42: Bandit.Pipeline.run/5
+    (bandit 1.8.0) lib/bandit/http1/handler.ex:13: Bandit.HTTP1.Handler.handle_data/3
+ request_id=GHjgJQrixw-nvXMAAAVC 
+2025-11-19 10:17:13.487 [error] Running RegistratieWeb.Endpoint with Bandit 1.8.0 at http failed, port 4000 already in use 
+2025-11-19 11:52:30.990 [error] ** (KeyError) key :auto_date not found in: %{
+  existing: nil,
+  instructions: ["Zoek eerst de hostname van de laptop (bij Windows: Instellingen > Info > Apparaatnaam). Dit wordt de sleutel in CouchDB.",
+   "Controleer of er al een inventarisatie bestaat voor deze hostname. Staat er al één, dan moet een andere BOL 2 student de tweede inventarisatie doen.",
+   "Vul alle hardware-gegevens in zoals je ze in Windows, BIOS of hulpprogramma's kunt terugvinden.",
+   "Sla het formulier op; de gegevens worden veilig in de database 'laptops' opgeslagen."],
+  form: %Phoenix.HTML.Form{
+    source: %{date: "2025-11-19", hostname: "", student_name: "AapT"},
+    impl: Phoenix.HTML.FormData.Map,
+    id: "laptop",
+    name: "laptop",
+    data: %{},
+    action: nil,
+    hidden: [],
+    params: %{date: "2025-11-19", hostname: "", student_name: "AapT"},
+    errors: [],
+    options: [],
+    index: nil
+  },
+  auto_student_name: "AapT",
+  page_title: "Laptop inventarisatie",
+  current_user: %{
+    "_id" => "AapT",
+    "_rev" => "18-3bf1b948ba42957368b0c6295f37e41b",
+    "achternaam" => "Theo",
+    "created_at" => "2025-11-15",
+    "eindDatum" => "2026-03-22",
+    "email" => "aapT@gmail.com",
+    "firstPassword" => false,
+    "hostname" => "hans-odijk-Macmini7-1",
+    "mobiel" => "06.27.90.00.12.34",
+    "name" => "AapT",
+    "opleiding" => "Bol 2",
+    "opmerkingen" => [],
+    "postcode" => "1101 GH",
+    "roles" => ["studenten"],
+    "stageDagen" => ["ma", "di"],
+    "startDatum" => "2025-11-30",
+    "status" => "Actief",
+    "type" => "student",
+    "updated_at" => "2025-11-16",
+    "voornaam" => "Aap",
+    "woonplaats" => "Hilversum"
+  },
+  flash: %{},
+  conn: %Plug.Conn{
+    adapter: {Bandit.Adapter,
+     %Bandit.Adapter{
+       transport: %Bandit.HTTP1.Socket{
+         socket: %ThousandIsland.Socket{
+           socket: #Port<0.34>,
+           transport_module: ThousandIsland.Transports.TCP,
+           read_timeout: 60000,
+           silent_terminate_on_error: false,
+           span: %ThousandIsland.Telemetry{
+             span_name: :connection,
+             telemetry_span_context: #Reference<0.752247281.2046820354.69765>,
+             start_time: -576460609308723328,
+             start_metadata: %{
+               handler: Bandit.DelegatingHandler,
+               remote_port: 35508,
+               remote_address: {127, 0, 0, 1},
+               telemetry_span_context: #Reference<0.752247281.2046820354.69765>,
+               parent_telemetry_span_context: #Reference<0.752247281.2046820354.68955>
+             }
+           }
+         },
+         buffer: "",
+         read_state: :read,
+         write_state: :unsent,
+         unread_content_length: nil,
+         body_encoding: nil,
+         version: :"HTTP/1.1",
+         send_buffer: nil,
+         request_connection_header: "keep-alive",
+         keepalive: nil,
+         opts: %{http: [], websocket: [], http_1: [], http_2: []}
+       },
+       owner_pid: #PID<0.881.0>,
+       method: "GET",
+       status: nil,
+       content_encoding: "gzip",
+       compression_context: nil,
+       upgrade: nil,
+       metrics: %{req_header_end_time: -576460609300774713},
+       opts: %{http: [], websocket: [], http_1: [], http_2: []}
+     }},
+    assigns: %{
+      existing: nil,
+      instructions: ["Zoek eerst de hostname van de laptop (bij Windows: Instellingen > Info > Apparaatnaam). Dit wordt de sleutel in CouchDB.",
+       "Controleer of er al een inventarisatie bestaat voor deze hostname. Staat er al één, dan moet een andere BOL 2 student de tweede inventarisatie doen.",
+       "Vul alle hardware-gegevens in zoals je ze in Windows, BIOS of hulpprogramma's kunt terugvinden.",
+       "Sla het formulier op; de gegevens worden veilig in de database 'laptops' opgeslagen."],
+      form: %Phoenix.HTML.Form{
+        source: %{date: "2025-11-19", hostname: "", student_name: "AapT"},
+        impl: Phoenix.HTML.FormData.Map,
+        id: "laptop",
+        name: "laptop",
+        data: %{},
+        action: nil,
+        hidden: [],
+        params: %{date: "2025-11-19", hostname: "", student_name: "AapT"},
+        errors: [],
+        options: [],
+        index: nil
+      },
+      layout: {RegistratieWeb.Layouts, "app"},
+      auto_student_name: "AapT",
+      page_title: "Laptop inventarisatie",
+      current_user: %{
+        "_id" => "AapT",
+        "_rev" => "18-3bf1b948ba42957368b0c6295f37e41b",
+        "achternaam" => "Theo",
+        "created_at" => "2025-11-15",
+        "eindDatum" => "2026-03-22",
+        "email" => "aapT@gmail.com",
+        "firstPassword" => false,
+        "hostname" => "hans-odijk-Macmini7-1",
+        "mobiel" => "06.27.90.00.12.34",
+        "name" => "AapT",
+        "opleiding" => "Bol 2",
+        "opmerkingen" => [],
+        "postcode" => "1101 GH",
+        "roles" => ["studenten"],
+        "stageDagen" => ["ma", "di"],
+        "startDatum" => "2025-11-30",
+        "status" => "Actief",
+        "type" => "student",
+        "updated_at" => "2025-11-16",
+        "voornaam" => "Aap",
+        "woonplaats" => "Hilversum"
+      },
+      flash: %{},
+      auto_date_iso: "2025-11-19"
+    },
+    body_params: %{},
+    cookies: %{
+      "_registratie_key" => "SFMyNTY.g3QAAAACbQAAAAtfY3NyZl90b2tlbm0AAAAYVUI1bkNZOVBNdlc1YVNvOFFhaUE0Y1A5bQAAAAxjdXJyZW50X3VzZXJ0AAAAFW0AAAADX2lkbQAAAARBYXBUbQAAAARfcmV2bQAAACMxOC0zYmYxYjk0OGJhNDI5NTczNjhiMGM2Mjk1ZjM3ZTQxYm0AAAAKYWNodGVybmFhbW0AAAAEVGhlb20AAAAKY3JlYXRlZF9hdG0AAAAKMjAyNS0xMS0xNW0AAAAJZWluZERhdHVtbQAAAAoyMDI2LTAzLTIybQAAAAVlbWFpbG0AAAAOYWFwVEBnbWFpbC5jb21tAAAADWZpcnN0UGFzc3dvcmR3BWZhbHNlbQAAAAhob3N0bmFtZW0AAAAVaGFucy1vZGlqay1NYWNtaW5pNy0xbQAAAAZtb2JpZWxtAAAAETA2LjI3LjkwLjAwLjEyLjM0bQAAAARuYW1lbQAAAARBYXBUbQAAAAlvcGxlaWRpbmdtAAAABUJvbCAybQAAAAtvcG1lcmtpbmdlbmptAAAACHBvc3Rjb2RlbQAAAAcxMTAxIEdIbQAAAAVyb2xlc2wAAAABbQAAAAlzdHVkZW50ZW5qbQAAAApzdGFnZURhZ2VubAAAAAJtAAAAAm1hbQAAAAJkaWptAAAACnN0YXJ0RGF0dW1tAAAACjIwMjUtMTEtMzBtAAAABnN0YXR1c20AAAAGQWN0aWVmbQAAAAR0eXBlbQAAAAdzdHVkZW50bQAAAAp1cGRhdGVkX2F0bQAAAAoyMDI1LTExLTE2bQAAAAh2b29ybmFhbW0AAAADQWFwbQAAAAp3b29ucGxhYXRzbQAAAAlIaWx2ZXJzdW0.KlLSf98tldJyUYBX6_GEhyY84Ko5ZUY5AqYhT5zqi-I"
+    },
+    halted: false,
+    host: "localhost",
+    method: "GET",
+    owner: #PID<0.881.0>,
+    params: %{},
+    path_info: ["laptop-inventarisatie"],
+    path_params: %{},
+    port: 4000,
+    private: %{
+      :phoenix_live_reload => true,
+      :phoenix_template => "new.html",
+      :phoenix_view => %{
+        "html" => RegistratieWeb.LaptopInventoryHTML,
+        "json" => RegistratieWeb.LaptopInventoryJSON
+      },
+      RegistratieWeb.Router => [],
+      :phoenix_endpoint => RegistratieWeb.Endpoint,
+      :plug_session_fetch => :done,
+      :plug_session => %{
+        "_csrf_token" => "UB5nCY9PMvW5aSo8QaiA4cP9",
+        "current_user" => %{
+          "_id" => "AapT",
+          "_rev" => "18-3bf1b948ba42957368b0c6295f37e41b",
+          "achternaam" => "Theo",
+          "created_at" => "2025-11-15",
+          "eindDatum" => "2026-03-22",
+          "email" => "aapT@gmail.com",
+          "firstPassword" => false,
+          "hostname" => "hans-odijk-Macmini7-1",
+          "mobiel" => "06.27.90.00.12.34",
+          "name" => "AapT",
+          "opleiding" => "Bol 2",
+          "opmerkingen" => [],
+          "postcode" => "1101 GH",
+          "roles" => ["studenten"],
+          "stageDagen" => ["ma", "di"],
+          "startDatum" => "2025-11-30",
+          "status" => "Actief",
+          "type" => "student",
+          "updated_at" => "2025-11-16",
+          "voornaam" => "Aap",
+          "woonplaats" => "Hilversum"
+        }
+      },
+      :before_send => [#Function<0.98198498/1 in Plug.CSRFProtection.call/2>,
+       #Function<4.23985858/1 in Phoenix.Controller.fetch_flash/2>,
+       #Function<0.49469887/1 in Plug.Session.before_send/2>,
+       #Function<0.54455629/1 in Plug.Telemetry.call/2>,
+       #Function<1.47751264/1 in Phoenix.LiveReloader.before_send_inject_reloader/3>],
+      :phoenix_request_logger => {"request_logger", "request_logger"},
+      :phoenix_router => RegistratieWeb.Router,
+      :phoenix_action => :new,
+      :phoenix_layout => %{"html" => {R (truncated) request_id=GHli-Ptq23pPTGQAAAHi 
+2025-11-28 18:17:47.923 [error] Running RegistratieWeb.Endpoint with Bandit 1.8.0 at http failed, port 4000 already in use 
+2025-11-30 10:48:12.249 [error] Running RegistratieWeb.Endpoint with Bandit 1.8.0 at http failed, port 4000 already in use 

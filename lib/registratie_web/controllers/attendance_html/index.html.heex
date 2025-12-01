@@ -1,0 +1,137 @@
+<div class="mx-auto max-w-6xl space-y-8">
+  <section class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+    <h1 class="text-2xl font-semibold text-zinc-900">Aanwezigheidsoverzicht</h1>
+    <p class="mt-2 text-sm text-zinc-600">Selecteer een student om zijn of haar aanwezigheid te bekijken.</p>
+
+    <.form for={%{}} method="get" action={~p"/attendance"} class="mt-6 grid gap-4 sm:grid-cols-[2fr,auto]">
+      <div>
+        <label class="text-sm font-semibold text-zinc-800" for="student-select">Student</label>
+        <select
+          id="student-select"
+          name="student"
+          class="mt-2 w-full rounded-xl border border-zinc-300 px-4 py-2 text-sm text-zinc-900 focus:border-blue-400 focus:outline-none"
+        >
+          <%= if @selected_student == "" do %>
+            <option value="">Kies een student</option>
+          <% end %>
+          <%= for student <- @students do %>
+            <option value={student.name} selected={student.name == @selected_student}>
+              <%= student.label %>
+            </option>
+          <% end %>
+        </select>
+      </div>
+      <div class="self-end">
+        <button type="submit" class="w-full rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold uppercase tracking-wide text-white shadow-sm transition hover:bg-blue-700">
+          Toon overzicht
+        </button>
+      </div>
+    </.form>
+  </section>
+
+  <%= if @report do %>
+    <section class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm space-y-6">
+      <% stats = @report[:stats] || %{late: 0, early: 0, issues: 0} %>
+      <div class="grid gap-4 sm:grid-cols-3">
+        <div class="rounded-2xl border-2 border-red-300 bg-white px-4 py-3 text-center shadow-sm">
+          <p class="text-xs font-semibold uppercase tracking-wide text-zinc-500">Te laat</p>
+          <p class="text-2xl font-bold text-zinc-900"><%= stats.late || 0 %></p>
+        </div>
+        <div class="rounded-2xl border-2 border-red-300 bg-white px-4 py-3 text-center shadow-sm">
+          <p class="text-xs font-semibold uppercase tracking-wide text-zinc-500">Te vroeg vertrokken</p>
+          <p class="text-2xl font-bold text-zinc-900"><%= stats.early || 0 %></p>
+        </div>
+        <div class="rounded-2xl border-2 border-red-300 bg-white px-4 py-3 text-center shadow-sm">
+          <p class="text-xs font-semibold uppercase tracking-wide text-zinc-500">Thuis/Onbekend</p>
+          <p class="text-2xl font-bold text-zinc-900"><%= stats.issues || 0 %></p>
+        </div>
+      </div>
+      <div class="flex flex-wrap justify-between gap-4">
+        <div>
+          <% stage_days = @report.student["stageDagen"] |> List.wrap() %>
+          <h2 class="text-xl font-semibold text-zinc-900">Overzicht voor <%= @selected_student %></h2>
+          <p class="text-sm text-zinc-600">
+            Toegestane stagedagen:
+            <%= if stage_days == [], do: "Onbekend", else: Enum.join(stage_days, ", ") %>
+          </p>
+          <% rules = @rules || %{} %>
+          <% werktijd = Map.get(rules, :werktijd) || Map.get(rules, "werktijd") %>
+          <% aanwezigheid_rules =
+            (Map.get(rules, :aanwezigheid) ||
+               Map.get(rules, "aanwezigheid") ||
+               [])
+            |> List.wrap() %>
+          <%= if werktijd || Enum.any?(aanwezigheid_rules) do %>
+            <div class="mt-4 space-y-2 rounded-xl bg-zinc-50 px-4 py-3 text-sm text-zinc-700">
+              <p class="font-semibold text-zinc-900">Aanwezigheidsregels</p>
+              <%= if werktijd do %>
+                <p><%= werktijd %></p>
+              <% end %>
+              <%= if Enum.any?(aanwezigheid_rules) do %>
+                <ul class="list-disc space-y-1 pl-5">
+                  <%= for rule <- aanwezigheid_rules do %>
+                    <li><%= rule %></li>
+                  <% end %>
+                </ul>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <%= if Enum.empty?(@report.rows) do %>
+        <p class="text-sm text-zinc-600">Geen aanwezigheid gevonden voor deze student.</p>
+      <% else %>
+        <div class="overflow-x-auto rounded-2xl border border-zinc-200">
+          <table class="min-w-full divide-y divide-zinc-200 text-sm">
+            <thead class="bg-zinc-50 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
+              <tr>
+                <th class="px-4 py-3">Datum</th>
+                <th class="px-4 py-3">Dag</th>
+                <th class="px-4 py-3">Eerste inlog</th>
+                <th class="px-4 py-3">Laatste uitlog</th>
+                <th class="px-4 py-3 text-right">Aanwezig (uur)</th>
+                <th class="px-4 py-3">Boodschap</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-100 bg-white text-zinc-700">
+              <%= for row <- @report.rows do %>
+                <tr>
+                  <td class="px-4 py-3 font-medium text-zinc-900"><%= row.date_label %></td>
+                  <td class="px-4 py-3 capitalize"><%= row.weekday %></td>
+                  <td class="px-4 py-3"><%= row.first_login %></td>
+                  <td class="px-4 py-3"><%= row.last_logout %></td>
+                  <td class="px-4 py-3 text-right font-semibold"><%= row.hours_label %></td>
+                  <td class="px-4 py-3 text-sm">
+                    <% message = String.trim(row.message || "") %>
+                    <%= if message == "" do %>
+                      <span class="inline-flex min-w-[8rem] items-center rounded-full bg-zinc-50 px-3 py-1 font-semibold text-zinc-500">-</span>
+                    <% else %>
+                      <span class="inline-flex min-w-[8rem] items-center rounded-full bg-emerald-50 px-3 py-1 font-semibold text-emerald-700">
+                        <%= message %>
+                      </span>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+        <div class="rounded-2xl bg-emerald-50 px-6 py-4 text-lg font-semibold text-emerald-700">
+          Totaal aanwezig: <%= @report.total_label %> uur
+        </div>
+        <div class="flex justify-end">
+          <.form for={%{"student" => @selected_student}} method="post" action={~p"/attendance/export"} class="inline-flex">
+            <input type="hidden" name="student" value={@selected_student} />
+            <button
+              type="submit"
+              class="rounded-xl border border-zinc-300 px-5 py-2 text-sm font-semibold text-zinc-800 hover:bg-zinc-100"
+            >
+              Opslaan als PDF
+            </button>
+          </.form>
+        </div>
+      <% end %>
+    </section>
+  <% end %>
+</div>

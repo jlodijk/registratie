@@ -1,0 +1,176 @@
+<div class="mx-auto max-w-5xl space-y-6">
+  <section class="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-amber-500">Begeleiding</p>
+        <h1 class="text-3xl font-semibold text-zinc-900">Taken beheren</h1>
+        <p class="text-sm text-zinc-600">Ken taken toe aan studenten en volg de voortgang.</p>
+      </div>
+    </div>
+
+    <div class="mt-6 grid gap-6 lg:grid-cols-[1.3fr,1fr]">
+      <.form for={@form} action={~p"/taken"} method="post" class="space-y-4 rounded-2xl border border-blue-100 bg-blue-50/50 p-5">
+        <h2 class="text-lg font-semibold text-zinc-900">Nieuwe taak</h2>
+
+        <div>
+          <label class="text-sm font-semibold text-zinc-700">Student</label>
+          <select
+            name="task[student]"
+            class="mt-1 w-full rounded-xl border border-zinc-300 px-3 py-2 text-sm text-zinc-800 focus:border-blue-400 focus:outline-none"
+            required
+          >
+            <option value="">Kies een student</option>
+            <%= for student <- @students do %>
+              <option value={student["_id"]}><%= student["name"] %> - <%= student["voornaam"] %> <%= student["achternaam"] %></option>
+            <% end %>
+          </select>
+        </div>
+
+        <div>
+          <label class="text-sm font-semibold text-zinc-700">Taak</label>
+          <input
+            type="text"
+            name="task[taak]"
+            list="standaard_taken"
+            class="mt-1 w-full rounded-xl border border-zinc-300 px-3 py-2 text-sm text-zinc-800 focus:border-blue-400 focus:outline-none"
+            placeholder="Bijv. Upload stageverslag"
+            required
+          />
+          <datalist id="standaard_taken">
+            <%= for taak <- @standard_tasks do %>
+              <option value={taak} />
+            <% end %>
+          </datalist>
+          <%= if @standard_tasks != [] do %>
+            <details class="mt-2 rounded-xl border border-dashed border-blue-200 bg-white/70 p-3 text-xs text-zinc-600">
+              <summary class="cursor-pointer font-semibold text-blue-700">Bekijk standaard taken</summary>
+              <ul class="mt-2 list-disc space-y-1 pl-5">
+                <%= for taak <- @standard_tasks do %>
+                  <li><%= taak %></li>
+                <% end %>
+              </ul>
+            </details>
+          <% end %>
+        </div>
+
+        <div class="grid gap-4 md:grid-cols-2">
+          <div>
+            <label class="text-sm font-semibold text-zinc-700">Deadline</label>
+            <input
+              type="date"
+              name="task[datum]"
+              value={@form[:datum].value}
+              class="mt-1 w-full rounded-xl border border-zinc-300 px-3 py-2 text-sm text-zinc-800 focus:border-blue-400 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label class="text-sm font-semibold text-zinc-700">Status</label>
+            <select
+              name="task[status]"
+              class="mt-1 w-full rounded-xl border border-zinc-300 px-3 py-2 text-sm text-zinc-800 focus:border-blue-400 focus:outline-none"
+            >
+              <%= for status <- @statuses do %>
+                <option value={status} selected={status == "open"}><%= Phoenix.Naming.humanize(status) %></option>
+              <% end %>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex justify-end">
+          <button
+            type="submit"
+            class="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-5 py-2 text-sm font-semibold uppercase tracking-wide text-white shadow-sm transition hover:bg-amber-600"
+          >
+            <.icon name="hero-plus" class="h-4 w-4" />
+            Taak toevoegen
+          </button>
+        </div>
+      </.form>
+
+      <div class="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
+        <h2 class="text-lg font-semibold text-zinc-900">Statusuitleg</h2>
+        <p class="mt-2 text-sm text-zinc-600">Elke taak krijgt standaard de status <strong>Open</strong>. Wanneer de student klaar is, zet je de taak op <strong>Volbracht</strong>.</p>
+        <dl class="mt-4 space-y-3 text-sm text-zinc-600">
+          <div class="rounded-xl bg-blue-50/80 p-3">
+            <dt class="font-semibold text-blue-900">Open</dt>
+            <dd>De student moet de taak nog afronden.</dd>
+          </div>
+          <div class="rounded-xl bg-emerald-50/80 p-3">
+            <dt class="font-semibold text-emerald-900">Volbracht</dt>
+            <dd>De taak is gecontroleerd of bevestigd als afgerond.</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-blue-500">Openstaande taken</p>
+        <h2 class="text-2xl font-semibold text-zinc-900">Overzicht</h2>
+      </div>
+    </div>
+
+    <%= if Enum.empty?(@tasks) do %>
+      <p class="mt-4 text-sm text-zinc-600">Er zijn nog geen taken. Voeg de eerste taak toe via het formulier hierboven.</p>
+    <% else %>
+      <div class="mt-6 overflow-x-auto rounded-2xl border border-zinc-100">
+        <table class="min-w-full divide-y divide-zinc-100 text-sm">
+          <thead class="bg-zinc-50 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
+            <tr>
+              <th class="px-4 py-3">Student</th>
+              <th class="px-4 py-3">Taak</th>
+              <th class="px-4 py-3">Deadline</th>
+              <th class="px-4 py-3">Status</th>
+              <th class="px-4 py-3 text-right">Acties</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-100">
+            <%= for taak <- @tasks do %>
+              <tr class="">
+                <td class="px-4 py-4">
+                  <p class="font-semibold text-zinc-900"><%= taak["student_name"] %></p>
+                  <p class="text-xs text-zinc-500"><%= taak["student_username"] %></p>
+                </td>
+                <td class="px-4 py-4">
+                  <p class="text-zinc-800"><%= taak["taak"] %></p>
+                  <p class="text-xs text-zinc-500">Toegekend door <%= taak["assigned_by"] || "-" %></p>
+                </td>
+                <td class="px-4 py-4 text-zinc-700"><%= format_date(taak["datum"]) %></td>
+                <td class="px-4 py-4">
+                  <span class={[
+                    "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold capitalize",
+                    taak["status"] == "volbracht" && "bg-emerald-100 text-emerald-800",
+                    taak["status"] != "volbracht" && "bg-amber-100 text-amber-800"
+                  ]}>
+                    <%= taak["status"] || "open" %>
+                  </span>
+                </td>
+                <td class="px-4 py-4 text-right">
+                  <.form for={%{}} method="post" action={~p"/taken/#{taak["_id"]}/status"} class="inline-flex gap-2">
+                    <input type="hidden" name="_method" value="post" />
+                    <select
+                      name="status"
+                      class="rounded-xl border border-zinc-300 px-3 py-1 text-xs text-zinc-700 focus:border-blue-400 focus:outline-none"
+                    >
+                      <%= for status <- @statuses do %>
+                        <option value={status} selected={status == taak["status"]}><%= Phoenix.Naming.humanize(status) %></option>
+                      <% end %>
+                    </select>
+                    <button
+                      type="submit"
+                      class="rounded-xl bg-zinc-900 px-3 py-1 text-xs font-semibold text-white hover:bg-zinc-700"
+                    >
+                      Opslaan
+                    </button>
+                  </.form>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+  </section>
+</div>

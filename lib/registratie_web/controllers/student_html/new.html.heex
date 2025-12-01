@@ -1,0 +1,83 @@
+<div class="space-y-6">
+  <div>
+    <h1 class="text-2xl font-semibold text-zinc-900">Nieuwe student</h1>
+    <p class="mt-2 text-sm text-zinc-600">
+      Vul de gegevens van de student in. Het veld <strong>Gebruikersnaam</strong> wordt ook als
+      CouchDB <code>_id</code> gebruikt. Bekijk of pas de stagedagen en het tijdvak aan.
+    </p>
+    <p class="text-xs uppercase tracking-wide text-rose-600 font-semibold">
+      Velden met * zijn verplicht.
+    </p>
+  </div>
+
+  <.simple_form for={@form} action={~p"/students"} method="post">
+    <.input field={@form[:name]} label="Gebruikersnaam *" placeholder="bijv. stud1" required />
+    <.input field={@form[:voornaam]} label="Voornaam" />
+    <.input field={@form[:achternaam]} label="Achternaam" />
+    <.input field={@form[:email]} type="email" label="E-mailadres" />
+    <.input
+      field={@form[:opleiding]}
+      type="select"
+      label="Opleiding *"
+      prompt="Kies opleiding"
+      options={[
+        {"Programmeur", "Programmeur"},
+        {"Bol 2 ICT", "Bol 2 ICT"}
+      ]}
+      required
+    />
+    <.input field={@form[:mobiel]} label="Mobiel nummer" />
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <.input field={@form[:woonplaats]} label="Woonplaats" />
+      <.input
+        field={@form[:postcode]}
+        label="Postcode *"
+        placeholder="1234 AB"
+        pattern="^\d{4}\s?[A-Za-z]{2}$"
+        title="Voer een geldige Nederlandse postcode in (bijv. 1234 AB)"
+        required
+      />
+    </div>
+    <.input field={@form[:hostname]} label="Hostname" />
+
+    <div>
+      <p class="text-sm font-semibold text-zinc-800">Stagedagen *</p>
+      <p class="text-xs text-zinc-500">
+        Selecteer minstens één dag waarop de student aanwezig is.
+      </p>
+      <div class="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
+        <label
+          :for={day <- @weekdays}
+          class={[
+            "flex items-center gap-2 rounded border px-3 py-2 text-sm",
+            day.value in @selected_days &&
+              "border-zinc-900 text-zinc-900",
+            day.value not in @selected_days &&
+              "border-zinc-300 text-zinc-600"
+          ]}
+        >
+          <input
+            type="checkbox"
+            name="student[stageDagen][]"
+            value={day.value}
+            checked={day.value in @selected_days}
+            class="h-4 w-4 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900"
+          />
+          <span>{day.label}</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <.date_picker field={@form[:startDatum]} label="Startdatum *" required />
+      <.date_picker field={@form[:eindDatum]} label="Einddatum *" required />
+    </div>
+
+    <:actions>
+      <.button type="submit">Student opslaan</.button>
+      <.link href={~p"/home"} class="text-sm text-zinc-600 hover:text-zinc-900">
+        Annuleren
+      </.link>
+    </:actions>
+  </.simple_form>
+</div>
