@@ -81,6 +81,21 @@ defmodule Registratie.Attendance do
   defp maybe_log_event(_event, nil, _metadata), do: :error
 
   defp maybe_log_event(event, user_session, metadata) do
+    with :ok <- ensure_stage_period_today(user_session) do
+      check_attendance_rules(event, user_session, metadata)
+    end
+  end
+
+  defp ensure_stage_period_today(%{"name" => name}) when is_binary(name) do
+    case ensure_in_stage_period(name, Date.utc_today()) do
+      :ok -> :ok
+      {:error, _} -> {:error, :stage_period}
+    end
+  end
+
+  defp ensure_stage_period_today(_), do: {:error, :stage_period}
+
+  defp check_attendance_rules(event, user_session, metadata) do
     cond do
       not pure_student?(user_session) ->
         :ok

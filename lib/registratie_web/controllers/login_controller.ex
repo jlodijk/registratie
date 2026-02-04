@@ -273,6 +273,9 @@ defmodule RegistratieWeb.LoginController do
     if incoming == "", do: "onbekende lokatie", else: "onbekende lokatie (#{incoming})"
   end
 
+  defp human_reason(:stage_period, _user_session, _metadata),
+    do: "geen stage (buiten stageperiode)"
+
   defp human_reason(:no_stage_day, _user_session, _metadata), do: "geen stagedag"
 
   defp human_reason(:hostname_mismatch, user_session, metadata) do
