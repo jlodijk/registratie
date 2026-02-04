@@ -23,8 +23,6 @@ defmodule RegistratieWeb.StudentOverviewController do
       students: students,
       selected_student_id: selected || "",
       student: student,
-      # Pass the full flash map to components; ensures Phoenix.Flash.get/2 receives a map.
-      flash: get_flash(conn),
       contact_people: contact_people
     )
   end

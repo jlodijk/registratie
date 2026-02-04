@@ -335,7 +335,7 @@ defmodule RegistratieWeb.StudentController do
 
   defp create_student_user(_, _), do: {:error, "Ongeldige studentnaam."}
 
-  defp maybe_create_user_secondary(_user_doc) do
+  defp maybe_create_user_secondary(user_doc) do
     case secondary_config() do
       :disabled ->
         :ok
@@ -344,7 +344,7 @@ defmodule RegistratieWeb.StudentController do
         base = String.trim_trailing(url, "/") <> "/_users"
         auth = {:basic, "#{username}:#{password}"}
 
-        case Req.post(Req.new(base_url: base, auth: auth, json: true), json: _user_doc) do
+        case Req.post(Req.new(base_url: base, auth: auth, json: true), json: user_doc) do
           {:ok, %{status: status}} when status in 200..299 -> :ok
           {:ok, %{status: 409}} -> :ok
           {:ok, %{status: status, body: body}} ->

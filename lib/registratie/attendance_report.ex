@@ -7,7 +7,6 @@ defmodule Registratie.AttendanceReport do
 
   @attendance_db Application.compile_env(:registratie, :attendance_db, "aanwezig")
   @students_db "studenten"
-  @bbsid_db "bbsid"
   @users_db "_users"
   @time_zone "Europe/Amsterdam"
   @weekday_codes %{1 => "ma", 2 => "di", 3 => "wo", 4 => "do", 5 => "vr", 6 => "za", 7 => "zo"}

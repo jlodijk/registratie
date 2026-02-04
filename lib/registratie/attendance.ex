@@ -348,9 +348,6 @@ defmodule Registratie.Attendance do
     end
   end
 
-  @doc """
-  Controleert of een datum binnen de stageperiode (startDatum/eindDatum) van een student valt.
-  """
   defp ensure_in_stage_period(student, %Date{} = date) do
     with {:ok, doc} <- fetch_student(student),
          {:ok, start_date} <- parse_optional_date(Map.get(doc, "startDatum")),
