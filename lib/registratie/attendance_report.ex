@@ -198,8 +198,8 @@ defmodule Registratie.AttendanceReport do
 
   defp issues_for(login, logout, student, allowed_wifi) do
     expected_host = student |> fetch_field("hostname") |> normalize_text()
-    login_host = login.hostname |> sanitize_text() |> normalize_text()
-    logout_host = logout.hostname |> sanitize_text() |> normalize_text()
+    login_host = login |> event_field(:hostname) |> sanitize_text() |> normalize_text()
+    logout_host = logout |> event_field(:hostname) |> sanitize_text() |> normalize_text()
 
     host_issue =
       cond do
@@ -208,8 +208,8 @@ defmodule Registratie.AttendanceReport do
         true -> "Onbekende laptop"
       end
 
-    login_ssid = normalize_ssid(login.ssid)
-    logout_ssid = normalize_ssid(logout.ssid)
+    login_ssid = normalize_ssid(event_field(login, :ssid))
+    logout_ssid = normalize_ssid(event_field(logout, :ssid))
 
     wifi_issue =
       cond do
@@ -393,6 +393,10 @@ defmodule Registratie.AttendanceReport do
     |> Enum.reject(&is_nil/1)
     |> Enum.sum()
   end
+
+  defp event_field(nil, _), do: nil
+  defp event_field(event, key) when is_map(event), do: Map.get(event, key)
+  defp event_field(_, _), do: nil
 
   defp to_number(val) when is_number(val), do: val
   defp to_number(val) when is_binary(val) do
