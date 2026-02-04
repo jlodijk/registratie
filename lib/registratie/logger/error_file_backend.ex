@@ -14,8 +14,18 @@ defmodule Registratie.Logger.ErrorFileBackend do
     {:ok, configure_backend(config)}
   end
 
+  def init({backend, name}) when is_atom(backend) do
+    config = Application.get_env(:logger, {backend, name}, [])
+    {:ok, configure_backend(config)}
+  end
+
   def init(__MODULE__) do
     config = Application.get_env(:logger, __MODULE__, [])
+    {:ok, configure_backend(config)}
+  end
+
+  def init(backend) when is_atom(backend) do
+    config = Application.get_env(:logger, backend, [])
     {:ok, configure_backend(config)}
   end
 

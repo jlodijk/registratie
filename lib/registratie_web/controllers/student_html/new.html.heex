@@ -12,9 +12,10 @@
 
   <.simple_form for={@form} action={~p"/students"} method="post">
     <.input field={@form[:name]} label="Gebruikersnaam *" placeholder="bijv. stud1" required />
+    <.input field={@form[:password]} type="password" label="Wachtwoord *" required />
     <.input field={@form[:voornaam]} label="Voornaam" />
     <.input field={@form[:achternaam]} label="Achternaam" />
-    <.input field={@form[:email]} type="email" label="E-mailadres" />
+    <.input field={@form[:email]} type="email" label="E-mailadres *" required />
     <.input
       field={@form[:opleiding]}
       type="select"
@@ -31,11 +32,10 @@
       <.input field={@form[:woonplaats]} label="Woonplaats" />
       <.input
         field={@form[:postcode]}
-        label="Postcode *"
+        label="Postcode"
         placeholder="1234 AB"
         pattern="^\d{4}\s?[A-Za-z]{2}$"
         title="Voer een geldige Nederlandse postcode in (bijv. 1234 AB)"
-        required
       />
     </div>
     <.input field={@form[:hostname]} label="Hostname" />

@@ -27,11 +27,12 @@ defmodule RegistratieWeb.StudentHTML do
           type="text"
           id={"#{@field.id}-display"}
           value={@display_value}
-          placeholder="dd-mm-jjjj"
+          placeholder="dd-mm-yyyy"
           inputmode="numeric"
           pattern="\d{2}-\d{2}-\d{4}"
           class="flex-1 rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-zinc-400 focus:outline-none"
           data-role="display"
+          lang="nl"
           autocomplete="off"
           required={@required}
         />
@@ -49,6 +50,7 @@ defmodule RegistratieWeb.StudentHTML do
         name={@field.name}
         value={@iso_value}
         data-role="hidden"
+        lang="nl"
         required={@required}
         style="position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none;"
       />

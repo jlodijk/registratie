@@ -43,6 +43,15 @@ defmodule RegistratieWeb.StudentProfileController do
     end
   end
 
+  def delete(conn, _params) do
+    conn
+    |> put_flash(
+      :error,
+      "Zelf uitschrijven is gedeactiveerd. Neem contact op met een begeleider of administrator."
+    )
+    |> redirect(to: ~p"/profiel")
+  end
+
   defp fetch_student(conn) do
     case conn.assigns[:current_user] do
       %{"name" => name} -> load_student(name)
@@ -107,4 +116,5 @@ defmodule RegistratieWeb.StudentProfileController do
       |> halt()
     end
   end
+
 end

@@ -1,0 +1,16 @@
+# Dev image for running mix/iex/phoenix in docker-compose
+FROM elixir:1.16-slim
+
+# Tools required to compile deps and build assets
+RUN apt-get update \
+    && apt-get install -y build-essential git curl nodejs npm inotify-tools \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+ENV MIX_ENV=dev
+
+# Pre-install hex/rebar so they are cached in the image
+RUN mix local.hex --force && mix local.rebar --force
+
+# Default to a shell; override with `command` in compose
+CMD ["sh"]

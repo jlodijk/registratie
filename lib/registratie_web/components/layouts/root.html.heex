@@ -22,7 +22,13 @@
       <div class="h-64 w-64 rounded-full bg-gradient-to-tr from-[#0EA5E9]/30 to-[#F97316]/30 blur-3xl opacity-80"></div>
     </div>
 
-    <.asha_brand_row current_user={@current_user} />
+    <% compact? =
+      cond do
+        not is_nil(assigns[:compact_header?]) -> assigns[:compact_header?]
+        is_nil(assigns[:current_user]) -> true
+        true -> false
+      end %>
+    <.asha_brand_row current_user={@current_user} compact_header?={compact?} />
     <div class="relative z-10">
       {@inner_content}
     </div>

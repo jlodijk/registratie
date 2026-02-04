@@ -60,6 +60,10 @@ defmodule RegistratieWeb.Router do
     delete "/contactpersonen", ContactPersonSchoolController, :delete
 
     get "/studenten/overzicht", StudentOverviewController, :index
+    post "/studenten/extra-uren", StudentOverviewController, :add_extra_hours
+    post "/studenten/verwijder", StudentOverviewController, :delete
+
+    live "/mijn-uren", MyHoursLive, :index
 
     get "/bbsids", BssidController, :index
     post "/bbsids", BssidController, :create
@@ -69,6 +73,7 @@ defmodule RegistratieWeb.Router do
 
     get "/profiel", StudentProfileController, :edit
     post "/profiel", StudentProfileController, :update
+    post "/profiel/uitschrijven", StudentProfileController, :delete
 
     get "/devices", DevicesController, :index
     get "/network", NetworkController, :index

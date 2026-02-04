@@ -13,10 +13,36 @@ defmodule RegistratieWeb.Layouts do
   embed_templates "layouts/*"
 
   attr :current_user, :any, default: nil
+  attr :compact_header?, :boolean, default: false
 
   def asha_brand_row(assigns) do
     ~H"""
     <header class="relative z-30 isolate border-b border-white/60 bg-white/80 shadow-sm backdrop-blur">
+      <%= if @compact_header? do %>
+        <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+          <a href="/" class="flex items-center">
+            <img
+              src={~p"/images/stichting-asha-logo.svg"}
+              width="190"
+              alt="Stichting Asha"
+              class="h-auto"
+            />
+          </a>
+
+          <div class="flex items-center gap-3 text-base font-semibold leading-6 text-zinc-900">
+            <.link href={~p"/contact"} class="hover:text-zinc-700 inline-flex items-center gap-2">
+              <.icon name="hero-phone-arrow-up-right" class="h-4 w-4" />
+              Contact
+            </.link>
+            <.link
+              href={~p"/login"}
+              class="bg-blue-600 text-white font-semibold rounded-full px-5 py-2 border-2 border-[#FB923C] shadow-md hover:bg-blue-700 hover:shadow-lg transition"
+            >
+              Login
+            </.link>
+          </div>
+        </div>
+      <% else %>
       <div aria-hidden="true" class="pointer-events-none absolute inset-y-0 right-[-5%] hidden w-1/2 rotate-6 bg-gradient-to-br from-[#FDBA74]/50 via-[#FB923C]/30 to-[#0EA5E9]/30 blur-2xl sm:block -z-10"></div>
       <div aria-hidden="true" class="pointer-events-none absolute inset-y-0 left-[-10%] w-1/3 -rotate-6 bg-gradient-to-br from-[#0EA5E9]/40 via-[#38BDF8]/20 to-transparent blur-3xl -z-10"></div>
       <div class="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-4 sm:px-6 lg:px-8">
@@ -446,6 +472,7 @@ defmodule RegistratieWeb.Layouts do
           </.link>
         </nav>
       </div>
+      <% end %>
     </header>
     """
   end

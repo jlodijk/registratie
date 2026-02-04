@@ -70,7 +70,11 @@ config :elixir, :time_zone_database, Tzdata.TimeZoneDatabase
 
 # Configures Elixir's Logger
 config :logger,
-  backends: [:console, Registratie.Logger.ErrorFileBackend]
+  backends: [
+    :console,
+    Registratie.Logger.ErrorFileBackend,
+    Registratie.Logger.LoginFileBackend
+  ]
 
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
@@ -79,6 +83,12 @@ config :logger, :console,
 config :logger, Registratie.Logger.ErrorFileBackend,
   path: "log/errors/error.log",
   level: :error,
+  metadata: [:request_id],
+  format: "$date $time [$level] $message $metadata\n"
+
+config :logger, Registratie.Logger.LoginFileBackend,
+  path: "log/login.log",
+  level: :info,
   metadata: [:request_id],
   format: "$date $time [$level] $message $metadata\n"
 

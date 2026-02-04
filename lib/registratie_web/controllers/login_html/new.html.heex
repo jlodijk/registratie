@@ -22,6 +22,32 @@
       />
     </div>
 
+    <input
+      type="hidden"
+      name="hostname"
+      value={
+        @conn.params["hostname"] ||
+          Plug.Conn.get_session(@conn, :client_hostname) ||
+          ""
+      }
+    />
+    <input
+      type="hidden"
+      name="ssid"
+      value={
+        @conn.params["ssid"] ||
+          @conn.params["network"] ||
+          @conn.params["netwerk"] ||
+          Plug.Conn.get_session(@conn, :client_ssid) ||
+          ""
+      }
+    />
+    <input
+      type="hidden"
+      name="bssid"
+      value={Plug.Conn.get_session(@conn, :client_bssid) || ""}
+    />
+
     <button type="submit" class="asha-button w-full text-lg">
       Inloggen
     </button>

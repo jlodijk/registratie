@@ -12,6 +12,10 @@ defmodule Registratie.Application do
       {DNSCluster, query: Application.get_env(:registratie, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Registratie.PubSub},
       Registratie.Repo,
+      # Async CouchDB secondary writes
+      {Task.Supervisor, name: Registratie.Couch.TaskSup, restart: :transient},
+      # Eenmalige sync van _users tussen couchdb1 en couchdb2
+      Registratie.UserReplicator,
       # Start the Finch HTTP client for sending emails
       {Finch, name: Registratie.Finch},
       # Start a worker by calling: Registratie.Worker.start_link(arg)

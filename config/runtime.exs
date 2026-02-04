@@ -32,7 +32,10 @@ end
 config :registratie,
   couchdb_username: Dotenvy.env!("COUCHDB_USERNAME", :string!),
   couchdb_password: Dotenvy.env!("COUCHDB_PASSWORD", :string!),
-  couchdb_url: Dotenvy.env!("COUCHDB_URL", :string!)
+  couchdb_url: Dotenvy.env!("COUCHDB_URL", :string!),
+  couchdb_secondary_url: System.get_env("COUCHDB_SECONDARY_URL"),
+  couchdb_secondary_username: System.get_env("COUCHDB_SECONDARY_USERNAME"),
+  couchdb_secondary_password: System.get_env("COUCHDB_SECONDARY_PASSWORD")
 
 database_url =
   System.get_env("DATABASE_URL") ||

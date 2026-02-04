@@ -1,6 +1,7 @@
 defmodule RegistratieWeb.LoginController do
   use RegistratieWeb, :controller
-  alias Registratie.{Attendance, Auth, Couch}
+  require Logger
+  alias Registratie.{Attendance, Auth, Couch, DateUtils}
 
   # GET /login — toon inlogpagina
   def new(conn, _params) do
@@ -18,12 +19,24 @@ defmodule RegistratieWeb.LoginController do
     conn = maybe_capture_client_metadata(conn, params)
     metadata = session_metadata(conn)
 
+    Logger.info("""
+    login capture: params_hostname=#{inspect(params["hostname"])} params_ssid=#{inspect(pick_ssid(params))}
+    session_hostname=#{inspect(get_session(conn, :client_hostname))} session_ssid=#{inspect(get_session(conn, :client_ssid))}
+    metadata_hostname=#{inspect(metadata.hostname)} metadata_ssid=#{inspect(metadata.ssid)}
+    """)
+
+    Logger.info("attendance check payload: stored_hostname=#{inspect(get_session(conn, :current_user) && get_session(conn, :current_user)["hostname"])} incoming_hostname=#{inspect(metadata.hostname)}")
+
+    log_client_hostname(username, metadata)
+
     case Auth.authenticate(username, password) do
       {:ok, user_ctx} ->
         first_password? = first_password_required?(username)
+        student_profile = load_student_profile(user_ctx, metadata)
+
         user_session =
           user_ctx
-          |> Map.merge(load_student_profile(user_ctx))
+          |> Map.merge(student_profile)
           |> normalize_roles()
           |> Map.put("firstPassword", first_password?)
 
@@ -88,8 +101,9 @@ defmodule RegistratieWeb.LoginController do
 
   defp session_metadata(conn) do
     %{
-      hostname: get_session(conn, :client_hostname),
-      bssid: get_session(conn, :client_bssid),
+      hostname: get_session(conn, :client_hostname) || conn.params["hostname"],
+      ssid: get_session(conn, :client_ssid) || pick_ssid(conn.params),
+      bssid: get_session(conn, :client_bssid) || conn.params["bssid"],
       platform: user_agent(conn)
     }
   end
@@ -105,8 +119,15 @@ defmodule RegistratieWeb.LoginController do
   defp maybe_capture_client_metadata(conn, params) do
     conn
     |> maybe_put_metadata(:client_hostname, params["hostname"])
+    |> maybe_put_metadata(:client_ssid, pick_ssid(params))
     |> maybe_put_metadata(:client_bssid, params["bssid"])
   end
+
+  defp pick_ssid(params) when is_map(params) do
+    params["network"] || params["netwerk"] || params["ssid"]
+  end
+
+  defp pick_ssid(_), do: nil
 
   defp maybe_put_metadata(conn, _key, nil), do: conn
 
@@ -135,14 +156,29 @@ defmodule RegistratieWeb.LoginController do
   defp log_attendance(conn, _event, nil, _metadata), do: conn
 
   defp log_attendance(conn, :login, user_session, metadata) do
-    Attendance.log_login(user_session, metadata)
-    conn
+    case Attendance.log_login(user_session, metadata) do
+      :ok ->
+        conn
+
+      {:error, reason} ->
+        conn
+        |> put_flash(:error, human_reason(reason, user_session, metadata))
+    end
   end
 
   defp log_attendance(conn, :logout, user_session, metadata) do
+    # Geen flash bij logout; stille fout is ok.
     Attendance.log_logout(user_session, metadata)
     conn
   end
+
+  defp log_client_hostname(username, %{hostname: hostname} = metadata) do
+    Logger.info(
+      "Login metadata for #{username}: hostname=#{inspect(hostname)}, ssid=#{inspect(metadata.ssid)}, bssid=#{inspect(metadata.bssid)}, platform=#{inspect(metadata.platform)}"
+    )
+  end
+
+  defp log_client_hostname(_username, _metadata), do: :ok
 
   defp normalize_roles(%{"roles" => roles} = user_ctx) when is_list(roles) do
     normalized =
@@ -165,11 +201,85 @@ defmodule RegistratieWeb.LoginController do
 
   defp normalize_roles(_), do: %{"roles" => []}
 
-  defp load_student_profile(%{"name" => name}) do
-    Couch.get_doc("studenten", name)
-  rescue
-    _ -> %{}
+  defp load_student_profile(%{"name" => name}, metadata) do
+    {doc, doc_id} = fetch_student_doc(name)
+    maybe_fill_hostname(doc, metadata, doc_id || name)
   end
 
-  defp load_student_profile(_), do: %{}
+  defp load_student_profile(_user_ctx, _metadata), do: %{}
+
+  defp fetch_student_doc(name) do
+    with nil <- fetch_doc(name),
+         downcased <- String.downcase(name),
+         nil <- if(downcased != name, do: fetch_doc(downcased), else: nil) do
+      {nil, nil}
+    else
+      {doc, id} -> {doc, id}
+      nil -> {nil, nil}
+    end
+  end
+
+  defp fetch_doc(id) when is_binary(id) do
+    {Couch.get_doc("studenten", id), id}
+  rescue
+    _ -> nil
+  end
+
+  defp maybe_fill_hostname(nil, _metadata, _doc_id), do: %{}
+
+  defp maybe_fill_hostname(doc, metadata, doc_id) when is_map(doc) do
+    current = Map.get(doc, "hostname", "")
+    existing = normalize_hostname(current)
+    incoming = normalize_hostname(Map.get(metadata, :hostname))
+
+    cond do
+      existing != "" ->
+        doc
+
+      incoming == "" ->
+        doc
+
+      true ->
+        updates = %{
+          "hostname" => incoming,
+          "updated_at" => DateUtils.today_iso()
+        }
+
+        doc
+        |> persist_hostname(doc_id, updates)
+        |> Map.merge(updates)
+    end
+  end
+
+  defp maybe_fill_hostname(doc, _metadata, _doc_id), do: doc
+
+  defp persist_hostname(_doc, id, updates) when is_binary(id) do
+    Couch.update_doc("studenten", id, updates)
+  rescue
+    _ -> :ok
+  end
+
+  defp persist_hostname(_doc, _id, _updates), do: :ok
+
+  defp normalize_hostname(value) when is_binary(value) do
+    value
+    |> String.trim()
+  end
+
+  defp normalize_hostname(_), do: ""
+
+  defp human_reason(:network_unknown, _user_session, metadata) do
+    incoming = metadata |> Map.get(:ssid) |> to_string() |> String.trim()
+    if incoming == "", do: "onbekende lokatie", else: "onbekende lokatie (#{incoming})"
+  end
+
+  defp human_reason(:no_stage_day, _user_session, _metadata), do: "geen stagedag"
+
+  defp human_reason(:hostname_mismatch, user_session, metadata) do
+    stored = user_session |> Map.get("hostname") |> to_string() |> String.trim()
+    incoming = metadata |> Map.get(:hostname) |> to_string() |> String.trim()
+    "onbekende laptop (verwacht: #{stored}, ontvangen: #{incoming})"
+  end
+
+  defp human_reason(_, _user_session, _metadata), do: "aanwezigheid niet opgeslagen"
 end

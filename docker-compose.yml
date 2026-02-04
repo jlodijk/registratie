@@ -1,0 +1,127 @@
+services:
+  app:
+    build: .
+    container_name: registratie_app
+    depends_on:
+      - postgres
+      - couchdb1
+    env_file:
+      - .env
+    environment:
+      ELIXIR_ERL_OPTIONS: "+fnu"
+      LANG: "en_US.UTF-8"
+      LC_ALL: "en_US.UTF-8"
+      PHX_HOST: ${PHX_HOST:-localhost}
+      PORT: ${PORT:-8080}
+      REG_PRINT_HOME: /root/Downloads
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+      DATABASE_URL: ${DATABASE_URL}
+      COUCHDB_USERNAME: ${COUCHDB_USERNAME}
+      COUCHDB_PASSWORD: ${COUCHDB_PASSWORD}
+      COUCHDB_URL: ${COUCHDB_URL:-http://couchdb1:5984}
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./.env:/app/.env:ro
+    networks:
+      - couch_net
+    # Geef services wat meer tijd om netjes af te sluiten om SIGKILL/137 te voorkomen
+    stop_grace_period: 60s
+    restart: unless-stopped
+
+  couchdb1:
+    image: apache/couchdb:3.3
+    container_name: couchdb1
+    hostname: couchdb1
+    environment:
+      NODENAME: couchdb1
+      COUCHDB_USER: admin
+      COUCHDB_PASSWORD: ${COUCHDB1_PASSWORD}
+      LOG_LEVEL: warning
+    ports:
+      - "5984:5984"
+    volumes:
+      - couchdb1_data:/opt/couchdb/data
+      - ./couchdb1/certs:/opt/couchdb/certs
+    networks:
+      - couch_net
+    restart: unless-stopped
+
+  couchdb2:
+    image: apache/couchdb:3.3
+    container_name: couchdb2
+    hostname: couchdb2.local
+    environment:
+      NODENAME: couchdb2.local
+      COUCHDB_USER: admin
+      COUCHDB_PASSWORD: ${COUCHDB2_PASSWORD}
+      LOG_LEVEL: warning
+    ports:
+      - "5985:5984"
+    volumes:
+      - couchdb2_data:/opt/couchdb/data
+      - ./couchdb2/certs:/opt/couchdb/certs
+    networks:
+      - couch_net
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-registratie}
+      POSTGRES_USER: ${POSTGRES_USER:-reg_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d
+    networks:
+      - couch_net
+
+  elixir:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: registratie_elixir
+    working_dir: /app
+    command: ["sh", "-c", "mix setup && mix phx.server"]
+    env_file:
+      - .env
+    environment:
+      MIX_ENV: dev
+      PHX_SERVER: "true"
+      PHX_HOST: ${PHX_HOST:-localhost}
+      PORT: 4000
+      REG_PRINT_HOME: /root/Downloads
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:-dev-secret}
+      DATABASE_URL: ${DATABASE_URL:-"ecto://reg_user:Reg123!!@postgres:5432/registratie"}
+      COUCHDB_USERNAME: ${COUCHDB_USERNAME}
+      COUCHDB_PASSWORD: ${COUCHDB_PASSWORD}
+      COUCHDB_URL: ${COUCHDB_URL:-http://couchdb1:5984}
+      COUCHDB_SECONDARY_URL: ${COUCHDB_SECONDARY_URL:-http://couchdb2:5984}
+      COUCHDB_SECONDARY_USERNAME: ${COUCHDB_SECONDARY_USERNAME:-admin}
+      COUCHDB_SECONDARY_PASSWORD: ${COUCHDB_SECONDARY_PASSWORD}
+    volumes:
+      - ./:/app
+      - ~/.hex:/root/.hex
+      - ~/.cache/rebar3:/root/.cache/rebar3
+      - /home/hans-odijk/Downloads:/root/Downloads
+    ports:
+      - "4000:4000"
+    depends_on:
+      - postgres
+      - couchdb1
+    networks:
+      - couch_net
+    stop_grace_period: 60s
+    restart: unless-stopped
+
+networks:
+  couch_net:
+    driver: bridge
+
+volumes:
+  couchdb1_data:
+  couchdb2_data:
+  postgres_data:

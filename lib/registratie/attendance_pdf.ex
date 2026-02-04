@@ -66,6 +66,7 @@ defmodule Registratie.AttendancePdf do
   end
 
   defp build_content(lines) do
+    # Use monospaced font so padded columns line up.
     header = "BT\n/F1 10 Tf\n#{@line_height} TL\n#{@margin} #{@page_height - @margin} Td\n"
     body = Enum.map_join(lines, "", fn line -> "(" <> escape_text(line) <> ") Tj\nT*\n" end)
     header <> body <> "ET\n"
@@ -78,7 +79,7 @@ defmodule Registratie.AttendancePdf do
       {"<< /Type /Catalog /Pages 2 0 R >>"},
       {"<< /Type /Pages /Kids [3 0 R] /Count 1 /MediaBox [0 0 #{@page_width} #{@page_height}] >>"},
       {"<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>"},
-      {"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>"},
+      {"<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>"},
       {"<< /Length #{length} >>\nstream\n#{content}\nendstream"}
     ]
 

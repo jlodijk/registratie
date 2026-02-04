@@ -61,8 +61,8 @@ defmodule RegistratieWeb.AttendanceController do
     filename = "#{sanitized_name}-#{today}.pdf"
     base_dir =
       System.get_env("REG_PRINT_HOME") ||
-        System.get_env("HOME") ||
-        System.get_env("USERPROFILE") ||
+        (System.get_env("HOME") && Path.join(System.get_env("HOME"), "Downloads")) ||
+        (System.get_env("USERPROFILE") && Path.join(System.get_env("USERPROFILE"), "Downloads")) ||
         File.cwd!()
 
     dir = Path.join(base_dir, "printen")

@@ -8,18 +8,22 @@ defmodule Registratie.AttendanceReport do
   @attendance_db Application.compile_env(:registratie, :attendance_db, "aanwezig")
   @students_db "studenten"
   @bbsid_db "bbsid"
+  @users_db "_users"
   @time_zone "Europe/Amsterdam"
   @weekday_codes %{1 => "ma", 2 => "di", 3 => "wo", 4 => "do", 5 => "vr", 6 => "za", 7 => "zo"}
   @weekday_names %{1 => "maandag", 2 => "dinsdag", 3 => "woensdag", 4 => "donderdag", 5 => "vrijdag", 6 => "zaterdag", 7 => "zondag"}
   @month_names ~w(jan feb mar apr mei jun jul aug sep okt nov dec)
 
   def list_students do
+    roles = roles_map()
+
     case Couch.list_docs(@students_db) do
       %{"rows" => rows} ->
         rows
         |> Enum.map(&Map.get(&1, "doc"))
         |> Enum.reject(&is_nil/1)
         |> Enum.filter(&(Map.get(&1, "type") == "student"))
+        |> Enum.filter(&(pure_student?(Map.get(&1, "name") || Map.get(&1, "_id"), roles)))
         |> Enum.map(&format_student_entry/1)
         |> Enum.sort_by(&String.downcase(&1.label))
 
@@ -33,13 +37,12 @@ defmodule Registratie.AttendanceReport do
   def generate(student_name) when is_binary(student_name) do
     with {:ok, student} <- fetch_student(student_name),
          {:ok, events} <- fetch_events(student_name),
-         {:ok, allowed_bssid} <- allowed_bssids() do
+         {:ok, allowed_wifi} <- allowed_wifi_ssids() do
       rows =
         events
         |> normalize_events()
-        |> Enum.filter(&(&1.type in ["login", "logout"]))
-        |> Enum.group_by(&DateTime.to_date(&1.timestamp))
-        |> Enum.map(&build_row(&1, student, allowed_bssid))
+        |> Enum.group_by(&event_date/1)
+        |> Enum.map(&build_row(&1, student, allowed_wifi))
         |> Enum.reject(&is_nil/1)
         |> Enum.sort_by(& &1.date, {:desc, Date})
 
@@ -86,57 +89,75 @@ defmodule Registratie.AttendanceReport do
     exception -> {:error, Exception.message(exception)}
   end
 
-  defp allowed_bssids do
-    case Couch.list_docs(@bbsid_db) do
-      %{"rows" => rows} ->
-        set =
-          rows
-          |> Enum.map(&Map.get(&1, "doc"))
-          |> Enum.reject(&is_nil/1)
-          |> Enum.filter(&(Map.get(&1, "type") == "bbsid"))
-          |> Enum.map(&Map.get(&1, "BBSID"))
-          |> Enum.reject(&(&1 in [nil, ""]))
-          |> Enum.map(&String.upcase/1)
-          |> MapSet.new()
-
-        {:ok, set}
-
-      _ ->
-        {:ok, MapSet.new()}
-    end
-  rescue
-    _ -> {:ok, MapSet.new()}
+  # To avoid false negatives when access points change BSSID, we now pin to SSID.
+  # Only log an issue when the SSID differs from the approved networks below.
+  defp allowed_wifi_ssids do
+    MapSet.new([
+      "GU INTERNET",
+      "FREE WIFI UTRECHT",
+      "DOPENHANS"
+    ])
+    |> then(&{:ok, &1})
   end
 
   defp normalize_events(docs) do
     docs
     |> Enum.reduce([], fn doc, acc ->
-      case DateTime.from_iso8601(Map.get(doc, "tijd", "")) do
-        {:ok, dt, _} ->
-          [%{type: Map.get(doc, "event"), timestamp: shift_zone(dt), hostname: Map.get(doc, "hostname"), bssid: Map.get(doc, "bssid")} | acc]
+      case Map.get(doc, "event") do
+        "extra_hours" ->
+          date = Map.get(doc, "datum")
+
+          with {:ok, parsed_date} <- Date.from_iso8601(to_string(date)) do
+            [%{type: "extra_hours", date: parsed_date, hours: Map.get(doc, "hours") |> to_number(), reason: Map.get(doc, "reason") |> to_string()} | acc]
+          else
+            _ -> acc
+          end
 
         _ ->
-          acc
+          case DateTime.from_iso8601(Map.get(doc, "tijd", "")) do
+            {:ok, dt, _} ->
+              [
+                %{
+                  type: Map.get(doc, "event"),
+                  timestamp: shift_zone(dt),
+                  hostname: Map.get(doc, "hostname"),
+                  ssid: Map.get(doc, "ssid"),
+                  bssid: Map.get(doc, "bssid")
+                }
+                | acc
+              ]
+
+            _ ->
+              acc
+          end
       end
     end)
   end
 
-  defp build_row({date, events}, student, allowed_bssid) do
+  defp build_row({date, events}, student, allowed_wifi) do
     stage_days = MapSet.new(stage_days(student))
     day_code = Map.get(@weekday_codes, Date.day_of_week(date))
+    extras = Enum.filter(events, &(&1.type == "extra_hours"))
 
-    if day_code && MapSet.member?(stage_days, day_code) do
-      {first_login, last_logout} = pick_events(events)
-      issues = issues_for(first_login, last_logout, student, allowed_bssid)
+    # Toon altijd als er extra uren zijn; anders alleen op stagedagen
+    if (day_code && MapSet.member?(stage_days, day_code)) || extras != [] do
+      {first_login, last_logout} = pick_events(Enum.filter(events, &(&1.type in ["login", "logout"])))
+      issues =
+        issues_for(first_login, last_logout, student, allowed_wifi)
+        |> Enum.reject(&(&1 in ["Geen login", "Geen logout"]))
 
       hours =
-        if issues == [] do
-          compute_hours(first_login, last_logout)
-        else
-          0.0
-        end
+        compute_hours(first_login, last_logout)
+        |> Kernel.+(sum_extra_hours(extras))
 
-      message = Enum.join(issues, " / ")
+      extra_message =
+        extras
+        |> Enum.map(fn e -> "Extra uren #{display_value(e.hours)} (#{String.trim(e.reason) |> display_value()})" end)
+
+      message =
+        (issues ++ extra_message)
+        |> Enum.reject(&(&1 in [nil, ""]))
+        |> Enum.join(" / ")
 
       login_local = first_login && local_time(first_login.timestamp)
       logout_local = last_logout && local_time(last_logout.timestamp)
@@ -176,35 +197,39 @@ defmodule Registratie.AttendanceReport do
   defp last_logout_or_login([], logins), do: List.last(logins)
   defp last_logout_or_login(logouts, _logins), do: List.last(logouts)
 
-  defp issues_for(nil, nil, _student, _allowed), do: ["Geen login", "Geen logout"]
-  defp issues_for(nil, _logout, _student, _allowed), do: ["Geen login"]
-  defp issues_for(_login, nil, _student, _allowed), do: ["Geen logout"]
-
-  defp issues_for(login, logout, student, allowed_bssid) do
+  defp issues_for(login, logout, student, allowed_wifi) do
     expected_host = student |> fetch_field("hostname") |> normalize_text()
-    login_host_value = sanitize_text(login.hostname)
-    logout_host_value = sanitize_text(logout.hostname)
-    login_host = normalize_text(login_host_value)
-    logout_host = normalize_text(logout_host_value)
+    login_host = login.hostname |> sanitize_text() |> normalize_text()
+    logout_host = logout.hostname |> sanitize_text() |> normalize_text()
 
     host_issue =
       cond do
         expected_host == "" -> nil
-        login_host == expected_host and logout_host == expected_host -> nil
-        true -> "Onbekende hostname (#{display_value(login_host_value)}/#{display_value(logout_host_value)})"
+        login_host == expected_host and (logout_host == expected_host or logout_host == "") -> nil
+        true -> "Onbekende laptop"
       end
 
-    login_bssid = normalize_bssid(login.bssid)
-    logout_bssid = normalize_bssid(logout.bssid)
+    login_ssid = normalize_ssid(login.ssid)
+    logout_ssid = normalize_ssid(logout.ssid)
 
-    bssid_issue =
+    wifi_issue =
       cond do
-        MapSet.size(allowed_bssid) == 0 -> nil
-        MapSet.member?(allowed_bssid, login_bssid) and MapSet.member?(allowed_bssid, logout_bssid) -> nil
-        true -> "Onbekende BSSID (#{display_value(login_bssid)}/#{display_value(logout_bssid)})"
+        MapSet.size(allowed_wifi) == 0 -> nil
+        is_nil(login_ssid) and is_nil(logout_ssid) -> nil
+        MapSet.member?(allowed_wifi, login_ssid) and
+            (is_nil(logout_ssid) or MapSet.member?(allowed_wifi, logout_ssid)) ->
+          nil
+        MapSet.member?(allowed_wifi, logout_ssid) and is_nil(login_ssid) ->
+          nil
+
+        login_ssid == logout_ssid and not is_nil(login_ssid) ->
+          "Onbekende WiFi (#{display_value(login_ssid)})"
+
+        true ->
+          "Onbekende WiFi (#{display_value(login_ssid)}/#{display_value(logout_ssid)})"
       end
 
-    Enum.reject([host_issue, bssid_issue], &is_nil/1)
+    Enum.reject([host_issue, wifi_issue], &is_nil/1)
   end
 
   defp compute_hours(nil, _), do: 0.0
@@ -226,8 +251,18 @@ defmodule Registratie.AttendanceReport do
 
       true ->
         minutes = DateTime.diff(adjusted_logout.timestamp, login.timestamp, :minute)
-        base = max(minutes / 60 - 0.5, 0)
-        Float.floor(base * 2) / 2
+        work_minutes =
+          cond do
+            # Als de eerste inlog na 13:00 is, geen verplichte pauze aftrekken
+            local_time(login.timestamp).hour >= 13 ->
+              max(minutes, 0)
+
+            true ->
+              # Trek 30 minuten pauze af, maar niet onder nul
+              max(minutes - 30, 0)
+          end
+
+        work_minutes / 60.0
     end
   end
 
@@ -255,7 +290,8 @@ defmodule Registratie.AttendanceReport do
   end
 
   defp float_to_half_hour(value) when is_number(value) do
-    Float.floor(value * 2) / 2
+    # Rond af naar dichtstbijzijnde halve uur (0.0, 0.5, 1.0, ...)
+    Float.round(value * 2.0, 0) / 2.0
   end
 
   defp format_date(%Date{} = date) do
@@ -317,13 +353,56 @@ defmodule Registratie.AttendanceReport do
     ArgumentError -> nil
   end
 
-  defp normalize_bssid(nil), do: nil
-  defp normalize_bssid(value) do
+  defp roles_map do
+    case Couch.list_docs(@users_db) do
+      %{"rows" => rows} ->
+        rows
+        |> Enum.map(&Map.get(&1, "doc"))
+        |> Enum.reject(&is_nil/1)
+        |> Enum.filter(&(Map.get(&1, "type") == "user"))
+        |> Enum.reduce(%{}, fn doc, acc ->
+          Map.put(acc, Map.get(doc, "name"), Map.get(doc, "roles", []))
+        end)
+
+      _ ->
+        %{}
+    end
+  rescue
+    _ -> %{}
+  end
+
+  defp pure_student?(name, roles_map) do
+    roles = Map.get(roles_map, name, [])
+    roles != [] and Enum.all?(roles, &(&1 in ["student", "studenten"]))
+  end
+
+  defp normalize_ssid(nil), do: nil
+
+  defp normalize_ssid(value) do
     value
     |> to_string()
     |> String.trim()
     |> String.upcase()
   end
+
+  defp event_date(%{type: "extra_hours", date: %Date{} = date}), do: date
+  defp event_date(%{timestamp: ts}), do: DateTime.to_date(ts)
+
+  defp sum_extra_hours(extras) do
+    extras
+    |> Enum.map(&to_number(Map.get(&1, :hours)))
+    |> Enum.reject(&is_nil/1)
+    |> Enum.sum()
+  end
+
+  defp to_number(val) when is_number(val), do: val
+  defp to_number(val) when is_binary(val) do
+    case Float.parse(val) do
+      {num, _} -> num
+      _ -> nil
+    end
+  end
+  defp to_number(_), do: nil
 
   defp shift_zone(%DateTime{} = dt) do
     case DateTime.shift_zone(dt, @time_zone) do

@@ -1,0 +1,86 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ghcr.io/hans-odijk/registratie:${IMAGE_TAG:-latest}
+    env_file: .env.prod
+    volumes:
+      # Dotenvy in runtime.exs loads "/app/.env"; mount our prod env there
+      - .env.prod:/app/.env:ro
+    environment:
+      # Ensure Phoenix binds to all interfaces
+      PHX_HOST: ${PHX_HOST:-localhost}
+      PORT: ${PORT:-8080}
+      DATABASE_URL: ${DATABASE_URL}
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+      COUCHDB_URL: ${COUCHDB_URL:-http://couchdb1:5984}
+      COUCHDB_USERNAME: ${COUCHDB_USERNAME}
+      COUCHDB_PASSWORD: ${COUCHDB_PASSWORD}
+      COUCHDB_SECONDARY_URL: ${COUCHDB_SECONDARY_URL:-http://couchdb2:5984}
+      COUCHDB_SECONDARY_USERNAME: ${COUCHDB_SECONDARY_USERNAME:-admin}
+      COUCHDB_SECONDARY_PASSWORD: ${COUCHDB_SECONDARY_PASSWORD}
+    ports:
+      - "80:8080"
+    depends_on:
+      - postgres
+      - couchdb1
+    restart: unless-stopped
+    networks:
+      - couch_net
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-registratie}
+      POSTGRES_USER: ${POSTGRES_USER:-reg_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d
+    networks:
+      - couch_net
+    restart: unless-stopped
+
+  couchdb1:
+    image: apache/couchdb:3.3
+    hostname: couchdb1
+    environment:
+      NODENAME: couchdb1
+      COUCHDB_USER: admin
+      COUCHDB_PASSWORD: ${COUCHDB1_PASSWORD}
+      LOG_LEVEL: warning
+    ports:
+      - "5984:5984"
+    volumes:
+      - couchdb1_data:/opt/couchdb/data
+      - ./couchdb1/certs:/opt/couchdb/certs
+    networks:
+      - couch_net
+    restart: unless-stopped
+
+  couchdb2:
+    image: apache/couchdb:3.3
+    hostname: couchdb2
+    environment:
+      NODENAME: couchdb2
+      COUCHDB_USER: admin
+      COUCHDB_PASSWORD: ${COUCHDB2_PASSWORD}
+      LOG_LEVEL: warning
+    ports:
+      - "5985:5984"
+    volumes:
+      - couchdb2_data:/opt/couchdb/data
+      - ./couchdb2/certs:/opt/couchdb/certs
+    networks:
+      - couch_net
+    restart: unless-stopped
+
+networks:
+  couch_net:
+    driver: bridge
+
+volumes:
+  couchdb1_data:
+  couchdb2_data:
+  postgres_data:

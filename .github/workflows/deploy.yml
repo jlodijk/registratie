@@ -1,0 +1,36 @@
+name: Deploy to Hetzner
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        env:
+          HETZNER_PORT: ${{ secrets.HETZNER_PORT || '22' }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.HETZNER_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          cat <<CONFIG > ~/.ssh/config
+          Host hetzner
+            HostName ${{ secrets.HETZNER_HOST }}
+            User ${{ secrets.HETZNER_USER }}
+            Port $HETZNER_PORT
+            IdentityFile ~/.ssh/id_ed25519
+            StrictHostKeyChecking no
+            IdentitiesOnly yes
+          CONFIG
+
+      - name: Copy deploy script
+        run: scp scripts/deploy.sh hetzner:/home/deploy/deploy.sh
+
+      - name: Deploy
+        run: |
+          ssh hetzner "chmod +x /home/deploy/deploy.sh && /home/deploy/deploy.sh"
