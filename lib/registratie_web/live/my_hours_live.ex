@@ -99,10 +99,10 @@ defmodule RegistratieWeb.MyHoursLive do
     |> String.replace(".", ",")
   end
 
+  defp format_total(_), do: "0,0"
+
   defp float_to_half_hour(value) when is_number(value) do
     # Rond af naar dichtstbijzijnde halve uur (0.0, 0.5, 1.0, ...)
     Float.round(value * 2.0, 0) / 2.0
   end
-
-  defp format_total(_), do: "0,0"
 end
