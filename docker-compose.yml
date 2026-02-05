@@ -6,7 +6,7 @@ services:
       - postgres
       - couchdb1
     env_file:
-      - .env
+      - .env.docker
     environment:
       ELIXIR_ERL_OPTIONS: "+fnu"
       LANG: "en_US.UTF-8"
@@ -20,7 +20,7 @@ services:
       COUCHDB_PASSWORD: ${COUCHDB_PASSWORD}
       COUCHDB_URL: ${COUCHDB_URL:-http://couchdb1:5984}
     ports:
-      - "80:8080"
+      - "8080:8080"
     volumes:
       - ./.env:/app/.env:ro
     networks:
@@ -34,6 +34,7 @@ services:
     container_name: couchdb1
     hostname: couchdb1
     environment:
+      # entrypoint prepends "couchdb@" automatisch; laat alleen hostname staan
       NODENAME: couchdb1
       COUCHDB_USER: admin
       COUCHDB_PASSWORD: ${COUCHDB1_PASSWORD}
@@ -50,9 +51,9 @@ services:
   couchdb2:
     image: apache/couchdb:3.3
     container_name: couchdb2
-    hostname: couchdb2.local
+    hostname: couchdb2
     environment:
-      NODENAME: couchdb2.local
+      NODENAME: couchdb2
       COUCHDB_USER: admin
       COUCHDB_PASSWORD: ${COUCHDB2_PASSWORD}
       LOG_LEVEL: warning
@@ -87,7 +88,7 @@ services:
     working_dir: /app
     command: ["sh", "-c", "mix setup && mix phx.server"]
     env_file:
-      - .env
+      - .env.docker
     environment:
       MIX_ENV: dev
       PHX_SERVER: "true"
