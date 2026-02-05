@@ -19,12 +19,20 @@ if [ -f "$ENV_FILE" ]; then
   set -a
   . "$ENV_FILE"
   set +a
-  export SECRET_KEY_BASE COUCHDB_USERNAME COUCHDB_PASSWORD COUCHDB_URL
-  echo "[deploy] Using COUCHDB_USERNAME=${COUCHDB_USERNAME:-unset}"
+  export SECRET_KEY_BASE COUCHDB_USERNAME COUCHDB_PASSWORD COUCHDB_URL DATABASE_URL
+  echo "[deploy] Using COUCHDB_URL=${COUCHDB_URL:-unset}"
 else
   echo "[deploy] ERROR: no env file found"
   exit 1
 fi
+
+# Basic required vars
+for var in SECRET_KEY_BASE COUCHDB_URL DATABASE_URL; do
+  if [ -z "${!var:-}" ]; then
+    echo "[deploy] ERROR: $var is not set"
+    exit 1
+  fi
+done
 
 # Ensure Dotenvy sees the env file in the app dir
 cp "$ENV_FILE" "$APP_DIR/.env"
@@ -55,11 +63,13 @@ git pull --ff-only origin "$BRANCH"
 
 echo "[deploy] Installing deps"
 mix deps.get --only prod
+mix deps.compile
 
 echo "[deploy] Compiling"
 mix compile
 
 echo "[deploy] Building assets"
+mix assets.install --if-missing
 mix assets.deploy
 
 echo "[deploy] Running migrations"
